@@ -15,6 +15,22 @@ The marks are less about the themes themselves and more about showing you **did 
 
 ---
 
+## Answer key: use it to check Copilot (don't paste it into Copilot)
+
+The padlet is https://padlet.com/jameshoey/cw1q3 and has **45 posts**. In the Excel export, "No data" only means the post had no title or no body text. No posts are missing. `padlet-posts-for-copilot.txt` has all 45, already merged and numbered, so paste that into Copilot.
+
+Our manual grouping (each post in exactly one theme; adds up to 45):
+
+| Theme | Posts | Count |
+|---|---|---|
+| Diverse perspectives & teamwork | P1, P5, P11, P14, P16, P21, P28, P33, P36, P37, P39 | 11 |
+| Reducing bias & improving quality | P7, P12, P15, P17, P24, P26, P32, P34, P38, P42 | 10 |
+| Accessibility & understanding users | P3, P9, P10, P23, P25, P29, P30, P40, P41 | 9 |
+| Business & society | P2, P6, P13, P18, P20, P22, P31, P45 | 8 |
+| Limits & conditions (the contradicting posts) | P4, P8, P19, P27, P35, P43, P44 | 7 |
+
+Copilot may use different names or 4–6 themes. That's fine if the grouping makes sense. What you're checking: every post appears once, the counts add up to 45, and no quotes or themes are invented. Borderline posts that are easy to misplace: P13 (accessibility *and* sales), P31 (business pressure, a negative), P41 (AI data), P19 (hiring).
+
 ## Step 1: Get the padlet posts ready
 
 1. Open the padlet link from Blackboard and wait until most people have posted.
