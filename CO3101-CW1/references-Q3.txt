@@ -1,0 +1,15 @@
+References (Question 3) - IEEE style. Merge into the group's single references page and renumber.
+
+[1] J. Hoey, "Inclusive approach to software engineering: The impacts on people, society, businesses," Padlet, CO3101 Lecture 5, 2026. [Online]. Available: https://padlet.com/jameshoey/cw1q3. [Accessed: 29 Oct. 2026].
+
+[2] J. Buolamwini and T. Gebru, "Gender shades: Intersectional accuracy disparities in commercial gender classification," in Proc. 1st Conf. Fairness, Accountability and Transparency, PMLR vol. 81, 2018, pp. 77-91.
+
+[3] McKinsey & Company, "Diversity matters even more: The case for holistic impact," Nov. 2023. [Online]. Available: https://www.mckinsey.com/featured-insights/diversity-and-inclusion/diversity-matters-even-more-the-case-for-holistic-impact. [Accessed: 29 Oct. 2026].
+
+[4] Equality Act 2010, c. 15. London, U.K.: The Stationery Office, 2010. [Online]. Available: https://www.legislation.gov.uk/ukpga/2010/15/contents. [Accessed: 29 Oct. 2026].
+
+[5] Microsoft Copilot, "Thematic grouping and mind map of CO3101 padlet posts," AI chat, 2026. [Online]. Available: <PASTE YOUR COPILOT SHARE LINK>. [Accessed: <DATE YOU USED IT, e.g. 29 Oct. 2026>].
+
+[6] Anthropic Claude, "Analysis of padlet posts and drafting of CO3101 CW1 Question 3," AI chat, 2026. [Online]. Available: <PASTE YOUR CLAUDE SHARE LINK>. [Accessed: 29 Oct. 2026].
+
+Italics (apply in Word): "Proc. 1st Conf. Fairness, Accountability and Transparency" in [2], and "Equality Act 2010" in [4].

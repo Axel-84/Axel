@@ -1,0 +1,82 @@
+CO3101 CW1 Q3 - COPILOT PROMPTS (copy each one into copilot.microsoft.com, signed in with your university account, in ONE new chat)
+
+===== PROMPT 1 (copy everything from here down to the last post, P45) =====
+I am analysing posts from a class Padlet titled "Inclusive Approach to Software Engineering: The Impacts on people / society / businesses". Below are all 45 posts, numbered P1 to P45.
+
+Group the posts into 4 to 6 themes. For each theme give:
+1. a short theme name
+2. a one-sentence description
+3. the post numbers that belong to it
+4. the number of posts in it
+
+Rules: every post must go into exactly one theme, use only the posts below, do not invent posts or quotes, and check that your counts add up to 45.
+
+P1: more varied viewpoints on cultural topics
+P2: the public learn to expect systems that work fairly, rather than accepting poor systems
+P3: people that have faced a disability might be more aware of the impacts and prepare better for it
+P4: if implemented incorrectly, e.g. no consideration of skillset, could cause issues with quality
+P5: more complete skillset of people
+P6: a product that is more globally applicable and therefore potentially more users / sales
+P7: subconscious bias of one developer could be noticed during development rather than after deployment
+P8: improvement away from "group think" — if handled well
+P9: potential users feel more represented
+P10: a more accessible system
+P11: can learn and teach each other
+P12: could make identifying edge cases of tests easier - e.g. an impact that is specific to a specific religion, or a pregnant woman, etc.
+P13: A better selling product, due it being more accessible and applicable for people with various different backgrounds
+P14: Able to consider all sides - especially when it comes to ethical/moral decisions
+P15: Train against biases
+P16: Diverse viewpoints.
+P17: Less chance of bias
+P18: reducing the digital divide
+P19: Hiring based of skills with faceless/voice changed interview and hiring process
+P20: Demographics which are generally underrepresented or under recognised in society will have a platform, which also helps bring awareness of those demographics to the general public.
+P21: More ideas
+P22: Having a more diverse group of people means there is more knowledge on different cultures/backgrounds so easier to reach bigger target audiences when you can relate to them.
+P23: Accounting for accessibility to created software, tools, websites, games etc
+P24: It could potentially minimize the chances of bias in those projects.
+P25: more accurate understanding of diverse users
+P26: New and Unique Viewpoints — A diverse team allows for a more varied set of viewpoints that could lead to better solutions and increases the chance of things being caught during code review.
+P27: important to consider, but vital it's a part of a robust hiring process, not the only step
+P28: Better brainstorming/ problem solving, bc peoples opinions will be diverse aswell
+P29: Able to get a closer feel to what the general public would think about a feature/decision
+P30: More accessible — Lots of ideas from different points of views if collaborated well, more people are able to use the software.
+P31: pressure on companies / businesses
+P32: Multiple backgrounds and experiences allows for code to be written to work for the largest number of people with the least bias, as there will almost always be someone who could be affected by the software negatively on the team.
+P33: People with different experiences of life will have different ideas on what is important. Important to consider impacts of advancements on all groups.
+P34: Quality Increases — since there are people who have lived through different experiences, cultures, lifestyles, you get a wide variety of viewpoints. This can increase quality.
+P35: non-diverse teams can fully consider impact and do a great job, but diversity (in all stages) makes it easier for everybody
+P36: Other people have different experiences — People will have experienced things you haven’t due to the differences between you which can be valuable to considering all the ways a business can affect someone
+P37: A team-led software development project requires multiple different ideas to speed up development for create software solutions. For team members with different backgrounds, this could lead to different intuitions/thought processes to derive different conclusions.
+P38: Different perspectives to prevent mishaps — Some people may not understand the impacts towards different communities therefore a representative can help stop potential problems that may arise
+P39: Diversity — Range of perspectives
+P40: In web development, websites around the world look completely different for culture reasons, for example Arabic websites need to accommodate for right to left scripts, Japanese/Chinese websites being more text dense compared to Western sites. Having diverse teams means you can accommodate for different groups of people and make technology more accessible for more people.
+P41: including different people in datasets when generating AI tools is important
+P42: when running focus groups, a diverse group might raise issues a non-diverse group could have missed inadvertently
+P43: non-diverse teams are not inherently bad or doing anything wrong on purpose, they might just overlook something that impacts others much more than themselves
+P44: this cannot capture all voices from around the world
+P45: wider acknowledgement of the issues is brought if software engineering has inclusivity embedded into all stages
+
+===== PROMPT 2 (so you can check every post) =====
+Now give me a table with three columns: Post number, Theme, and a reason of no more than 8 words. Include every post from P1 to P45 in order, then state the total number of posts in each theme.
+
+===== PROMPT 3 (only if Copilot made mistakes - edit the brackets first) =====
+I checked your grouping against the original posts and found these problems: [write what was wrong, e.g. "P31 is about pressure on businesses, a negative impact, not a benefit - move it to the theme about limits", "P19 is missing", "your counts add up to 43, not 45"]. Please fix these and give me the corrected themes with post numbers and counts.
+
+===== PROMPT 4 (contradictions and gaps) =====
+Which posts disagree with or put limits on the benefits of diversity? Which groups of people (for example disabled people, older people, women, LGBTQ+ people, neurodivergent people, low-income users) are mentioned in the posts, and which are missing? Give post numbers for everything you claim.
+
+===== PROMPT 5 (the mind map - Figure 1) =====
+Create a mind map of the corrected themes as Mermaid mindmap code. Put "Inclusive software engineering" in the centre, one branch per theme with the number of posts written as words like "11 posts", and 2 or 3 short leaves under each theme summarising the posts. Use only plain words in the node text: no brackets, quotation marks, colons or slashes. Give only the code.
+
+-> Copy the code Copilot gives you. Open https://mermaid.live, delete the example code on the left and paste yours.
+-> If it shows an error, paste the error message back into Copilot and say: "Fix this Mermaid code so it renders. Give only the code."
+-> Click "Actions" (or the download icon) -> PNG. That picture is Figure 1.
+
+===== AFTER THE CHAT =====
+1. Click Share (top of the Copilot chat) -> copy the link -> paste it into reference [5].
+2. Take a screenshot of Copilot's Prompt 2 table if you want it for Figure 2 / the video.
+3. In the Word file, fill in:
+   - Figure 1: the mind map picture
+   - "Critical use of AI" paragraph: [describe its main error]
+   - Figure 2 box: Copilot's first count and the corrections you made
