@@ -8,7 +8,7 @@ References (Question 3) - IEEE style. Merge into the group's single references p
 
 [4] Equality Act 2010, c. 15. London, U.K.: The Stationery Office, 2010. [Online]. Available: https://www.legislation.gov.uk/ukpga/2010/15/contents. [Accessed: 29 Oct. 2026].
 
-[5] Microsoft Copilot, "Thematic grouping and mind map of CO3101 padlet posts," AI chat, 2026. [Online]. Available: <PASTE YOUR COPILOT SHARE LINK>. [Accessed: <DATE YOU USED IT, e.g. 29 Oct. 2026>].
+[5] Microsoft Copilot, "Thematic grouping and mind map of CO3101 padlet posts," AI chat, 2026. [Online]. Available: <PASTE YOUR COPILOT SHARE LINK>. [Accessed: 29 Oct. 2026].
 
 [6] Anthropic Claude, "Analysis of padlet posts and drafting of CO3101 CW1 Question 3," AI chat, 2026. [Online]. Available: <PASTE YOUR CLAUDE SHARE LINK>. [Accessed: 29 Oct. 2026].
 
