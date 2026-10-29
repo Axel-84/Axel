@@ -1,15 +1,12 @@
-CO3101 CW1 Q3 - COPILOT PROMPTS (copy each one into copilot.microsoft.com, signed in with your university account, in ONE new chat)
+CO3101 CW1 Q3 - COPILOT CHAT 2 (step-by-step version for the video)
+Use copilot.microsoft.com, signed in with your UNIVERSITY account. Click "New chat". Send each prompt separately and READ the answer before sending the next one.
+Keep your first chat too - do not delete it.
 
-===== PROMPT 1 (copy everything from here down to the last post, P45) =====
-I am analysing posts from a class Padlet titled "Inclusive Approach to Software Engineering: The Impacts on people / society / businesses". Below are all 45 posts, numbered P1 to P45.
-
-Group the posts into 4 to 6 themes. For each theme give:
-1. a short theme name
-2. a one-sentence description
-3. the post numbers that belong to it
-4. the number of posts in it
-
-Rules: every post must go into exactly one theme, use only the posts below, do not invent posts or quotes, and check that your counts add up to 45.
+============================================================
+PROMPT 1 - Give Copilot the data and check it received everything
+(copy from "I am analysing" down to P45)
+============================================================
+I am analysing posts from a class Padlet titled "Inclusive Approach to Software Engineering: The Impacts on people / society / businesses". Below are all 45 posts, numbered P1 to P45. Before doing any analysis, tell me how many posts you received and list any post numbers that are missing. Do not analyse them yet.
 
 P1: more varied viewpoints on cultural topics
 P2: the public learn to expect systems that work fairly, rather than accepting poor systems
@@ -57,26 +54,65 @@ P43: non-diverse teams are not inherently bad or doing anything wrong on purpose
 P44: this cannot capture all voices from around the world
 P45: wider acknowledgement of the issues is brought if software engineering has inclusivity embedded into all stages
 
-===== PROMPT 2 (so you can check every post) =====
-Now give me a table with three columns: Post number, Theme, and a reason of no more than 8 words. Include every post from P1 to P45 in order, then state the total number of posts in each theme.
+YOUR CHECK: it must say 45 and none missing. If not, tell it which ones are missing.
 
-===== PROMPT 3 (only if Copilot made mistakes - edit the brackets first) =====
-I checked your grouping against the original posts and found these problems: [write what was wrong, e.g. "P31 is about pressure on businesses, a negative impact, not a benefit - move it to the theme about limits", "P19 is missing", "your counts add up to 43, not 45"]. Please fix these and give me the corrected themes with post numbers and counts.
+============================================================
+PROMPT 2 - Group into themes
+============================================================
+Now group the posts into 4 to 6 themes. For each theme give a short name, a one-sentence description, the post numbers in it and the count. Rules: every post goes into exactly one theme, use only these posts, do not invent posts or quotes, and check the counts add up to 45.
 
-===== PROMPT 4 (contradictions and gaps) =====
-Which posts disagree with or put limits on the benefits of diversity? Which groups of people (for example disabled people, older people, women, LGBTQ+ people, neurodivergent people, low-income users) are mentioned in the posts, and which are missing? Give post numbers for everything you claim.
+============================================================
+PROMPT 3 - Get a table so you can check every post
+============================================================
+Give me a table with three columns: Post number, Theme, and the reason in no more than 8 words. Include every post from P1 to P45 in order. Then give the total for each theme.
 
-===== PROMPT 5 (the mind map - Figure 1) =====
-Create a mind map of the corrected themes as Mermaid mindmap code. Put "Inclusive software engineering" in the centre, one branch per theme with the number of posts written as words like "11 posts", and 2 or 3 short leaves under each theme summarising the posts. Use only plain words in the node text: no brackets, quotation marks, colons or slashes. Give only the code.
+YOUR CHECK (do this with the Excel file open - take a screenshot):
+ [ ] Every post P1-P45 appears exactly once?
+ [ ] Totals add up to 45?
+ [ ] Cautious / critical posts are NOT listed as benefits? Check: P4, P8, P19, P27, P35, P43, P44
+ [ ] Business posts are under business? Check: P6, P13, P22, P31
+ [ ] Borderline posts make sense? Check: P2, P18, P20, P41, P45
+ Write down every post that is in the wrong place and why.
 
--> Copy the code Copilot gives you. Open https://mermaid.live, delete the example code on the left and paste yours.
--> If it shows an error, paste the error message back into Copilot and say: "Fix this Mermaid code so it renders. Give only the code."
--> Click "Actions" (or the download icon) -> PNG. That picture is Figure 1.
+============================================================
+PROMPT 4 - Correction (EDIT the lines in [ ] to match what YOU found)
+============================================================
+I checked your table against the original posts and found these problems:
+- [P__ says "______", which is ______, so it belongs in ______, not ______.]
+- [P__ says "______", which is ______, so it belongs in ______, not ______.]
+Please fix these and give me the corrected themes with post numbers and counts. Check the total is still 45.
 
-===== AFTER THE CHAT =====
-1. Click Share (top of the Copilot chat) -> copy the link -> paste it into reference [5].
-2. Take a screenshot of Copilot's Prompt 2 table if you want it for Figure 2 / the video.
-3. In the Word file, fill in:
-   - Figure 1: the mind map picture
-   - "Critical use of AI" paragraph: [describe its main error]
-   - Figure 2 box: Copilot's first count and the corrections you made
+(If Copilot made NO mistakes this time, send this instead:)
+I checked every post and agree with your grouping, except: [any post you would argue about]. Explain why you put [P__] in [theme] - could it fit another theme?
+
+============================================================
+PROMPT 5 - Contradictions and missing groups
+============================================================
+Which posts disagree with or limit the benefits of diversity? Which groups of people (older, disabled, women, LGBTQ+, neurodivergent, low-income, non-English speakers) are mentioned in the posts, and which are missing? Give post numbers for everything you claim.
+
+YOUR CHECK: compare with the "Who is missing" box on your Word page. Older, neurodivergent and LGBTQ+ users should be 0 posts. If Copilot says otherwise, ask "Which post mentions that?" - that is another mistake to show.
+
+============================================================
+PROMPT 6 - Test Copilot's evidence (shows you don't trust it blindly)
+============================================================
+Several posts claim that diverse teams make better and less biased software. What published evidence supports or contradicts this? Give me the exact source titles, authors, years and links.
+
+YOUR CHECK: open every link it gives. Does the page exist? Does it say what Copilot claims? Note any fake or wrong source. (Your Word page uses sources you checked yourself: Gender Shades and McKinsey.)
+
+============================================================
+PROMPT 7 - Ask Copilot about its own limits (threats to validity)
+============================================================
+What are the limitations of using you, an AI, to group these posts into themes? How could your grouping be biased or wrong?
+
+============================================================
+PROMPT 8 - Mind map
+============================================================
+Create a mind map of the corrected themes as Mermaid mindmap code. The first line must be %%{init: {"theme": "default"}}%% and the second line mindmap. Put "Inclusive software engineering" in the centre, one branch per theme with the number of posts written as words like "12 posts", and 2 or 3 short leaves under each theme summarising the posts. Use only plain words in node text: no brackets, quotation marks, colons or slashes. Give only the code.
+
+YOUR CHECK: do the counts on the mind map match the corrected counts?
+
+============================================================
+AFTER THE CHAT
+============================================================
+1. Click Share -> copy the link (or note that sharing is blocked and screenshot the chat).
+2. If this chat found DIFFERENT mistakes from your first chat, send Copilot's answers to Claude so the Word page (Critical use of AI paragraph + Figure 2) can be updated to match. The Word page must match what your chats really show.
