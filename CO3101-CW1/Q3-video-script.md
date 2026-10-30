@@ -23,10 +23,10 @@
 - **Correction message:** "I sent my corrections with reasons and my final checked grouping, and asked Copilot to compare. It confirmed all 45 posts appear exactly once, and the counts are 12, 11, 11, 4 and 7. It said the four differences were from its original grouping, and its latest table already had them fixed."
 - **Mind map:** "Finally, I asked for the mind map from the corrected grouping, and checked that its counts match: 12, 11, 11, 4 and 7."
 
-### 5. Findings (2:00–2:30) | Word page
+### 4. Findings (2:00–2:30) | Word page
 "My key findings: only 7 of 45 posts are cautious, and 0 cite any evidence. Disabled people, women and low-income users appear once each. Older, neurodivergent and LGBTQ+ users never appear, even though the padlet is about impacts on people."
 
-### 6. AI use (2:30–3:00) | References page, click each link
+### 5. AI use (2:30–3:00) | References page, click each link
 - "[5] is my Copilot chats. Copilot grouped the posts and made the mind map, and I checked all 45 posts and corrected the mistakes I've shown."
 - "[6] is my Claude chat. Claude explained the task, checked Copilot's grouping, suggested the Gender Shades and McKinsey sources (which I checked myself), helped draft the wording and re-drew the first mind map in light colours. I checked every quote and number against the padlet."
 - If a link can't be shared: "Sharing is blocked on my university account, so I've shown the chat on screen."
