@@ -13,19 +13,15 @@
 ### 2. Preparing the data (0:15–0:30) | Excel file
 "In the Excel export, each post is split into a Subject and a Body, with 'No data' when one is empty. I merged them and numbered every post P1 to P45, so I could check Copilot post by post."
 
-### 3. First attempt (0:30–1:00) | Copilot chat 1
-"I used Copilot through my university account. My first attempt was one big prompt asking for themes, post numbers and counts, with rules: every post in exactly one theme, no invented posts, and a total of 45."
-*Scroll to the answer.* "The total was correct, but when I checked each post I found four in the wrong theme. P8 says 'if handled well' and P43 says non-diverse teams are 'not inherently bad'. Both are cautious, but they were listed as benefits. P22 and P31 are about business, but neither was under Business, so Business had only 2 posts. That made the padlet look more positive than it is."
+### 3. Walk through the Copilot chat, in the order you did it (0:30–2:00) | Copilot chat
+"I used Copilot through my university account, all in one chat."
 
-### 4. Step-by-step attempt (1:00–2:00) | Copilot chat 2
-"Because one big prompt was hard to check, I redid it step by step."
-- **Prompt 1:** "First I made it confirm it received all 45 posts before analysing anything."
-- **Prompts 2–3:** "Then I asked for themes and a table of every post, which I checked against the Excel file." *Point at the posts it got wrong this time, or say "this time it placed P__ differently."*
-- **Prompt 4:** "I corrected [P__ and P__] because [reason]." *Show the new counts.*
-- **Prompt 5:** "I asked which groups are missing. It said [answer]. I checked: older, neurodivergent and LGBTQ+ users appear in 0 of 45 posts." *If Copilot was wrong here, say exactly what it got wrong.*
-- **Prompt 6:** "I asked it for evidence. [Say how many links worked and whether any were wrong or made up.] So I used sources I checked myself: the Gender Shades paper, which gives 34.7% versus 0.8%, and McKinsey, which gives 39%. McKinsey only shows correlation."
-- **Prompt 7:** "I asked about its own limits. It said [one point it gave]. This matters because [your view]."
-- **Prompt 8:** "Finally, the mind map. The counts match my checked counts: [read them]."
+- **Big first prompt:** "I gave it all 45 numbered posts and asked for themes, post numbers and counts, with rules: every post in exactly one theme, no invented posts, and a total of 45."
+  *Scroll to its first answer.* "The total was correct, but when I checked each post myself I found four in the wrong theme. P8 says 'if handled well' and P43 says non-diverse teams are 'not inherently bad'. Both are cautious, but they were listed as benefits. P22 and P31 are about business, but neither was under Business, so Business had only 2 posts. That made the padlet look more positive than it is."
+- **Prompts 2 and 3:** "I then asked for the themes again and for a table of every post, so I could check them one by one against the Excel file." *Point at P8, P43, P22 and P31 in the table.* "I checked these four myself in the table, rather than trusting Copilot's summary."
+- **Prompt 7:** "I asked Copilot about the limits of using AI for this. It said [read one point from its answer]. I agree because [your reason, e.g. it can't see who wrote the posts or read the images on the padlet]."
+- **Correction message:** "I sent my corrections with reasons and my final checked grouping, and asked Copilot to compare. It confirmed all 45 posts appear exactly once, and the counts are 12, 11, 11, 4 and 7. It said the four differences were from its original grouping, and its latest table already had them fixed."
+- **Mind map:** "Finally, I asked for the mind map from the corrected grouping, and checked that its counts match: 12, 11, 11, 4 and 7."
 
 ### 5. Findings (2:00–2:30) | Word page
 "My key findings: only 7 of 45 posts are cautious, and 0 cite any evidence. Disabled people, women and low-income users appear once each. Older, neurodivergent and LGBTQ+ users never appear, even though the padlet is about impacts on people."
