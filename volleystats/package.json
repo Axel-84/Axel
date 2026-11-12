@@ -4,10 +4,11 @@
   "private": true,
   "description": "Tag serve receive and serving from match video and get player stats.",
   "scripts": {
-    "serve": "npx --yes http-server www -p 8080 -c-1",
+    "serve": "live-server www --port=8080 --no-browser --host=0.0.0.0",
     "android:add": "npx cap add android",
     "android:sync": "npx cap sync android",
-    "android:open": "npx cap open android"
+    "android:open": "npx cap open android",
+    "preview": "live-server --port=8080 --no-browser --host=0.0.0.0 --open=/dev/phone-preview.html --watch=www,dev"
   },
   "dependencies": {
     "@capacitor/android": "^8.6.2",
@@ -15,5 +16,8 @@
     "@capacitor/core": "^8.6.2",
     "@capacitor/filesystem": "^8.1.5",
     "@capacitor/share": "^8.0.3"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
   }
 }

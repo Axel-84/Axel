@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>iPhone Preview</title>
+<!--
+  Reusable phone preview for any web app.
+  Open:  phone-preview.html?src=../www/          (path or full URL of your app)
+  Pick a device in the bar at the top. Your choice is remembered.
+-->
+<style>
+  :root { --bg: #e8ebf2; --text: #1f2937; --muted: #6b7280; --bar: #ffffff; --line: #d6dbe5; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg: #0d1117; --text: #e5e7eb; --muted: #9ca3af; --bar: #161b22; --line: #30363d; }
+  }
+  :root[data-theme="dark"] { --bg: #0d1117; --text: #e5e7eb; --muted: #9ca3af; --bar: #161b22; --line: #30363d; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { background: var(--bg); color: var(--text); font: 14px system-ui, -apple-system, sans-serif; display: flex; flex-direction: column; }
+  .bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 8px 12px; background: var(--bar); border-bottom: 1px solid var(--line); }
+  .bar select, .bar input, .bar button { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+  .bar input { flex: 1; min-width: 120px; }
+  .bar button { cursor: pointer; }
+  .stage { flex: 1; display: flex; align-items: center; justify-content: center; overflow: auto; padding: 16px; }
+  .scaler { transform-origin: center center; }
+  .phone {
+    position: relative; background: #0b0b0d; border-radius: 62px; padding: 14px;
+    box-shadow: 0 0 0 2px #3a3a3e, 0 0 0 5px #1b1b1d, 0 30px 60px rgba(0,0,0,.35);
+  }
+  .screen { position: relative; overflow: hidden; border-radius: 48px; background: #fff; display: flex; flex-direction: column; }
+  .status { height: 54px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 14px 30px 0; font-weight: 600; font-size: 16px; color: #fff; }
+  .island { position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 124px; height: 36px; background: #000; border-radius: 20px; z-index: 3; }
+  .notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 160px; height: 32px; background: #0b0b0d; border-radius: 0 0 20px 20px; z-index: 3; }
+  .icons { display: flex; gap: 6px; align-items: center; }
+  .batt { width: 26px; height: 12px; border: 1.5px solid currentColor; border-radius: 4px; padding: 1.5px; opacity: .9; }
+  .batt i { display: block; height: 100%; width: 75%; background: currentColor; border-radius: 1.5px; }
+  iframe { flex: 1; width: 100%; border: 0; display: block; background: #fff; }
+  .home { height: 30px; flex: none; display: flex; align-items: center; justify-content: center; background: inherit; }
+  .home i { width: 136px; height: 5px; border-radius: 3px; background: #111; opacity: .85; }
+  .phone.se { border-radius: 44px; padding: 64px 14px; }
+  .phone.se .screen { border-radius: 4px; }
+  .phone.se::after { content: ""; position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); width: 46px; height: 46px; border-radius: 50%; border: 2px solid #3a3a3e; }
+  .hint { color: var(--muted); font-size: 12px; }
+</style>
+</head>
+<body>
+  <div class="bar">
+    <select id="device" aria-label="Device"></select>
+    <input id="src" aria-label="App URL" spellcheck="false">
+    <button id="go">Load</button>
+    <button id="reload" title="Reload app">&#8635;</button>
+    <span class="hint" id="size"></span>
+  </div>
+  <div class="stage" id="stage">
+    <div class="scaler" id="scaler">
+      <div class="phone" id="phone">
+        <div class="screen" id="screen">
+          <div id="cut"></div>
+          <div class="status" id="status"><span id="clock">9:41</span><span class="icons">&#9679;&#9679;&#9679; <span class="batt"><i></i></span></span></div>
+          <iframe id="frame" title="App preview"></iframe>
+          <div class="home" id="home"><i></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+  // width x height in CSS points (what the app actually sees)
+  const DEVICES = {
+    'iPhone 16 / 15 / 14 Pro': { w: 393, h: 852, cut: 'island' },
+    'iPhone 16 Pro Max / 15 Plus': { w: 430, h: 932, cut: 'island' },
+    'iPhone 13 / 14': { w: 390, h: 844, cut: 'notch' },
+    'iPhone SE': { w: 375, h: 667, cut: 'se' },
+    'iPad mini (portrait)': { w: 744, h: 1133, cut: 'none' },
+  };
+  const $ = id => document.getElementById(id);
+  const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+  const params = new URLSearchParams(location.search);
+  $('src').value = params.get('src') || store.get('pp.src') || '../www/';
+  $('device').innerHTML = Object.keys(DEVICES).map(d => `<option>${d}</option>`).join('');
+  $('device').value = store.get('pp.device') in DEVICES ? store.get('pp.device') : Object.keys(DEVICES)[0];
+
+  function layout() {
+    const d = DEVICES[$('device').value];
+    const se = d.cut === 'se', bars = !se && d.cut !== 'none';
+    $('phone').className = 'phone' + (se ? ' se' : '');
+    $('screen').style.width = d.w + 'px';
+    $('screen').style.height = d.h + 'px';
+    $('status').style.display = bars ? 'flex' : 'none';
+    $('home').style.display = bars ? 'flex' : 'none';
+    $('cut').className = d.cut === 'island' ? 'island' : d.cut === 'notch' ? 'notch' : '';
+    $('size').textContent = d.w + ' × ' + d.h;
+    // fit the phone inside the window
+    const st = $('stage'), pw = d.w + (se ? 28 : 28), ph = d.h + (se ? 128 : 28);
+    const s = Math.min(1, (st.clientWidth - 32) / pw, (st.clientHeight - 32) / ph);
+    $('scaler').style.transform = `scale(${s})`;
+    $('scaler').style.margin = `${-(1 - s) * ph / 2}px ${-(1 - s) * pw / 2}px`;
+    store.set('pp.device', $('device').value);
+  }
+  // match the status bar / home bar colour to the app's top & bottom
+  function tint() {
+    try {
+      const doc = $('frame').contentDocument;
+      const top = doc.querySelector('.topbar, header') || doc.body;
+      const bg = getComputedStyle(top).backgroundColor;
+      $('status').style.background = bg;
+      const rgb = bg.match(/\d+/g) || [255, 255, 255];
+      const light = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000 > 150;
+      $('status').style.color = light ? '#111' : '#fff';
+      $('home').style.background = getComputedStyle(doc.body).backgroundColor;
+    } catch (e) { $('status').style.background = '#fff'; $('status').style.color = '#111'; }
+  }
+  function load() { store.set('pp.src', $('src').value); $('frame').src = $('src').value; }
+  $('frame').addEventListener('load', () => { tint(); setTimeout(tint, 400); });
+  $('go').onclick = load;
+  $('src').addEventListener('keydown', e => { if (e.key === 'Enter') load(); });
+  $('reload').onclick = () => { try { $('frame').contentWindow.location.reload(); } catch (e) { load(); } };
+  $('device').onchange = layout;
+  addEventListener('resize', layout);
+  setInterval(() => { $('clock').textContent = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).replace(/\s?[AP]M/i, ''); }, 10000);
+  layout(); load();
+</script>
+</body>
+</html>
