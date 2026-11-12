@@ -6,7 +6,7 @@
    ========================================================== */
 :root {
   /* Matte accent + grade colours (names kept from iOS for simplicity) */
-  --blue: #4f6d8f;          /* slate blue: main accent, links, selected */
+  --blue: #3b5745;          /* muted dark green: main accent, links, selected */
   --green: #527a5f;         /* sage */
   --teal: #53778d;          /* dusty steel blue */
   --orange: #9c6838;        /* clay / ochre */
@@ -21,7 +21,7 @@
   --muted: rgba(45,48,54,.58);
   --line: rgba(60,55,50,.16);
   --bar: rgba(243,241,237,.82);
-  --tint-soft: rgba(79,109,143,.12);
+  --tint-soft: rgba(59,87,69,.12);
   --danger-soft: rgba(169,85,77,.12);
   --seg-on: #fffefc;
   --card-edge: rgba(60,55,50,.07);
@@ -37,19 +37,19 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --blue: #8fa6c2; --green: #527a5f; --teal: #53778d; --orange: #9c6838; --red: #a3544c; --yellow: #b89c58; --gray: #8a857f;
+    --blue: #8aa892; --green: #527a5f; --teal: #53778d; --orange: #9c6838; --red: #a3544c; --yellow: #b89c58; --gray: #8a857f;
     --bg: #151617; --card: #202224; --fill: rgba(200,190,180,.08);
     --text: #e9e6e1; --muted: rgba(233,230,225,.55); --line: rgba(233,230,225,.10);
-    --bar: rgba(21,22,23,.82); --tint-soft: rgba(143,166,194,.14); --danger-soft: rgba(196,120,110,.14); --seg-on: #3a3d41; --card-edge: rgba(255,255,255,.04);
+    --bar: rgba(21,22,23,.82); --tint-soft: rgba(138,168,146,.14); --danger-soft: rgba(196,120,110,.14); --seg-on: #3a3d41; --card-edge: rgba(255,255,255,.04);
     --good: #8fb79a; --ok: #d0a06c; --bad: #d48a80;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --blue: #8fa6c2; --green: #527a5f; --teal: #53778d; --orange: #9c6838; --red: #a3544c; --yellow: #b89c58; --gray: #8a857f;
+  --blue: #8aa892; --green: #527a5f; --teal: #53778d; --orange: #9c6838; --red: #a3544c; --yellow: #b89c58; --gray: #8a857f;
   --bg: #151617; --card: #202224; --fill: rgba(200,190,180,.08);
   --text: #e9e6e1; --muted: rgba(233,230,225,.55); --line: rgba(233,230,225,.10);
-  --bar: rgba(21,22,23,.82); --tint-soft: rgba(143,166,194,.14); --danger-soft: rgba(196,120,110,.14); --seg-on: #3a3d41; --card-edge: rgba(255,255,255,.04);
+  --bar: rgba(21,22,23,.82); --tint-soft: rgba(138,168,146,.14); --danger-soft: rgba(196,120,110,.14); --seg-on: #3a3d41; --card-edge: rgba(255,255,255,.04);
   --good: #8fb79a; --ok: #d0a06c; --bad: #d48a80;
   color-scheme: dark;
 }
