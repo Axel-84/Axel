@@ -1,31 +1,34 @@
 /* ==========================================================
-   VolleyStats: iOS style (Apple Human Interface Guidelines)
-   System colours, inset grouped lists, frosted bars,
-   large titles, SF font on iPhone. Light + dark.
+   VolleyStats: iOS layout (Apple Human Interface Guidelines)
+   with a MATTE palette: soft, muted, low-saturation colours.
+   Inset grouped lists, frosted bars, large titles. Light + dark.
+   Change colours ONLY here.
    ========================================================== */
 :root {
-  /* iOS system colours (light) */
-  --blue: #007aff;
-  --green: #34c759;
-  --teal: #30b0c7;
-  --orange: #ff9500;
-  --red: #ff3b30;
-  --yellow: #ffcc00;
-  --gray: #8e8e93;
+  /* Matte accent + grade colours (names kept from iOS for simplicity) */
+  --blue: #4f6d8f;          /* slate blue: main accent, links, selected */
+  --green: #5f8a6c;         /* sage */
+  --teal: #5d8399;          /* dusty steel blue */
+  --orange: #b27b45;        /* clay / ochre */
+  --red: #a9554d;           /* brick rose */
+  --yellow: #c2a35a;        /* muted gold */
+  --gray: #8f8a84;          /* warm grey */
 
-  --bg: #f2f2f7;            /* systemGroupedBackground */
-  --card: #ffffff;          /* secondarySystemGroupedBackground */
-  --fill: rgba(118,118,128,.12); /* tertiarySystemFill */
-  --text: #000000;          /* label */
-  --muted: rgba(60,60,67,.6);    /* secondaryLabel */
-  --line: rgba(60,60,67,.29);    /* separator */
-  --bar: rgba(249,249,249,.8);   /* chrome material */
-  --tint-soft: rgba(0,122,255,.12);
+  --bg: #f3f1ed;            /* warm off-white page */
+  --card: #fcfbf9;          /* soft paper cards */
+  --fill: rgba(120,110,100,.10);
+  --text: #23262b;          /* soft ink instead of pure black */
+  --muted: rgba(45,48,54,.58);
+  --line: rgba(60,55,50,.16);
+  --bar: rgba(243,241,237,.82);
+  --tint-soft: rgba(79,109,143,.12);
+  --danger-soft: rgba(169,85,77,.12);
+  --seg-on: #fcfbf9;
 
-  --good: #248a3d; --ok: #c93400; --bad: #d70015;
+  --good: #4c7458; --ok: #9a6733; --bad: #a14a42;
   --g3: var(--green); --g2: var(--teal); --g1: var(--orange); --g0: var(--red);
 
-  --radius: 10px;
+  --radius: 12px;
   --tabbar-h: 50px;
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, Roboto, sans-serif;
   --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, Roboto, sans-serif;
@@ -33,20 +36,20 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --blue: #0a84ff; --green: #30d158; --teal: #40c8e0; --orange: #ff9f0a; --red: #ff453a; --yellow: #ffd60a; --gray: #8e8e93;
-    --bg: #000000; --card: #1c1c1e; --fill: rgba(118,118,128,.24);
-    --text: #ffffff; --muted: rgba(235,235,245,.6); --line: rgba(84,84,88,.65);
-    --bar: rgba(29,29,31,.8); --tint-soft: rgba(10,132,255,.2);
-    --good: #30d158; --ok: #ff9f0a; --bad: #ff453a;
+    --blue: #8fa6c2; --green: #5f8a6c; --teal: #5d8399; --orange: #a87644; --red: #a3544c; --yellow: #b89c58; --gray: #8a857f;
+    --bg: #151617; --card: #202224; --fill: rgba(200,190,180,.08);
+    --text: #e9e6e1; --muted: rgba(233,230,225,.55); --line: rgba(233,230,225,.10);
+    --bar: rgba(21,22,23,.82); --tint-soft: rgba(143,166,194,.14); --danger-soft: rgba(196,120,110,.14); --seg-on: #3a3d41;
+    --good: #8fb79a; --ok: #d0a06c; --bad: #d48a80;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --blue: #0a84ff; --green: #30d158; --teal: #40c8e0; --orange: #ff9f0a; --red: #ff453a; --yellow: #ffd60a; --gray: #8e8e93;
-  --bg: #000000; --card: #1c1c1e; --fill: rgba(118,118,128,.24);
-  --text: #ffffff; --muted: rgba(235,235,245,.6); --line: rgba(84,84,88,.65);
-  --bar: rgba(29,29,31,.8); --tint-soft: rgba(10,132,255,.2);
-  --good: #30d158; --ok: #ff9f0a; --bad: #ff453a;
+  --blue: #8fa6c2; --green: #5f8a6c; --teal: #5d8399; --orange: #a87644; --red: #a3544c; --yellow: #b89c58; --gray: #8a857f;
+  --bg: #151617; --card: #202224; --fill: rgba(200,190,180,.08);
+  --text: #e9e6e1; --muted: rgba(233,230,225,.55); --line: rgba(233,230,225,.10);
+  --bar: rgba(21,22,23,.82); --tint-soft: rgba(143,166,194,.14); --danger-soft: rgba(196,120,110,.14); --seg-on: #3a3d41;
+  --good: #8fb79a; --ok: #d0a06c; --bad: #d48a80;
   color-scheme: dark;
 }
 
@@ -129,8 +132,8 @@ p { line-height: 1.4; }
   background: var(--tint-soft); color: var(--blue);
   font: inherit; font-weight: 600; cursor: pointer; text-decoration: none;
 }
-.btn.primary { background: var(--blue); color: #fff; min-height: 50px; border-radius: 14px; }
-.btn.danger { background: rgba(255,59,48,.12); color: var(--red); }
+.btn.primary { background: var(--blue); color: var(--card); min-height: 50px; border-radius: 14px; }
+.btn.danger { background: var(--danger-soft); color: var(--red); }
 .btn.sm { min-height: 32px; padding: 0 12px; font-size: 15px; border-radius: 999px; }
 .btn.block { width: 100%; }
 .btn:disabled { opacity: .4; cursor: default; }
@@ -183,9 +186,9 @@ input[type=checkbox]:checked::after {
 /* ---------- Tagging ---------- */
 .tag-layout { display: grid; gap: 16px; }
 @media (min-width: 900px) { .tag-layout { grid-template-columns: 1.35fr 1fr; align-items: start; } .tag-side { position: sticky; top: 60px; } }
-.video-wrap { background: #000; border-radius: 12px; overflow: hidden; }
+.video-wrap { background: #000; border-radius: var(--radius); overflow: hidden; }
 .video-wrap video { display: block; width: 100%; max-height: 52vh; background: #000; }
-.vctrl { display: flex; gap: 6px; padding: 8px; background: #1c1c1e; flex-wrap: wrap; align-items: center; }
+.vctrl { display: flex; gap: 6px; padding: 8px; background: #1e2022; flex-wrap: wrap; align-items: center; }
 .vctrl .btn { background: rgba(255,255,255,.14); color: #fff; min-height: 34px; padding: 0 12px; border-radius: 999px; font-size: 15px; }
 .vctrl .time { color: rgba(235,235,245,.6); font-variant-numeric: tabular-nums; font-size: 13px; margin-left: auto; }
 .video-pick { text-align: center; padding: 22px 16px; }
@@ -201,9 +204,8 @@ input[type=checkbox]:checked::after {
   min-width: 38px; min-height: 30px; padding: 0 12px; border: 0; border-radius: 7px; background: transparent;
   color: var(--text); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
 }
-.setbar button.on, .seg button.on { background: var(--card); font-weight: 600; box-shadow: 0 3px 8px rgba(0,0,0,.12), 0 3px 1px rgba(0,0,0,.04); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .setbar button.on, :root:not([data-theme="light"]) .seg button.on { background: #636366; } }
-:root[data-theme="dark"] .setbar button.on, :root[data-theme="dark"] .seg button.on { background: #636366; }
+.setbar button.on, .seg button.on { background: var(--seg-on); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,.10); }
+
 .seg { max-width: 100%; overflow-x: auto; }
 
 .players { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px; }
@@ -215,11 +217,11 @@ input[type=checkbox]:checked::after {
 .pbtn .nm { font-size: 15px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pbtn .ps { position: absolute; top: 10px; right: 10px; }
 .pbtn .cnt { font-size: 12px; color: var(--muted); }
-.pbtn.sel { background: var(--blue); color: #fff; }
-.pbtn.sel .cnt { color: rgba(255,255,255,.8); }
-.pbtn.sel .pill { background: rgba(255,255,255,.25); color: #fff; }
+.pbtn.sel { background: var(--blue); color: var(--card); }
+.pbtn.sel .cnt { color: var(--card); opacity: .8; }
+.pbtn.sel .pill { background: rgba(255,255,255,.22); color: var(--card); }
 
-.grade-panel { box-shadow: 0 0 0 2px var(--blue); }
+.grade-panel { box-shadow: 0 0 0 1.5px var(--blue); }
 .grade-panel h3 { margin: 0; font-size: 17px; }
 .grades { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
 .gbtn {
@@ -266,7 +268,7 @@ details summary { cursor: pointer; color: var(--blue); }
   position: fixed; left: 50%; bottom: calc(var(--tabbar-h) + 20px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(10px) scale(.96);
   background: var(--bar); color: var(--text);
   -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
-  box-shadow: 0 8px 30px rgba(0,0,0,.18);
+  box-shadow: 0 6px 24px rgba(0,0,0,.10);
   padding: 12px 18px; border-radius: 14px; font-size: 15px; font-weight: 600;
   opacity: 0; pointer-events: none; transition: .2s; z-index: 50; max-width: calc(100% - 32px);
 }

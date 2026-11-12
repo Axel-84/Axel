@@ -15,8 +15,8 @@ The owner is a beginner: explain changes in plain language, keep steps simple.
 
 ## Design: Apple style (iOS Human Interface Guidelines)
 The app must look and feel like a native iPhone app. Always follow these when adding or changing UI:
-- iOS system colours from the tokens in `styles.css` (`--blue` #007AFF, `--green`, `--orange`, `--red`, `--teal`, `--gray`); never hard-code new colours.
-- Grouped background `--bg` with white inset grouped cells (`.card`, radius 10, no borders, hairline `.5px` separators).
+- **Matte palette** (owner's choice): soft, muted, low-saturation colours. Use only the tokens at the top of `styles.css` (`--blue` slate accent, `--green` sage, `--teal` steel, `--orange` clay, `--red` brick, `--gray`); never hard-code new colours and never use bright/neon iOS system colours. No glossy gradients or heavy shadows.
+- Warm off-white background `--bg` with soft inset grouped cells (`.card`, radius 12, no borders, hairline `.5px` separators).
 - Root tabs use a **large title** (`setChrome({ large: true })`); pushed screens use the small centred nav-bar title and a blue "‹ Back".
 - Frosted translucent nav bar and tab bar (backdrop blur). Tab bar: outline icons, blue when active.
 - Font is the system font (SF Pro on iPhone): 17px body, 13px uppercase grey section headers (`h2`), 34px bold large titles.
