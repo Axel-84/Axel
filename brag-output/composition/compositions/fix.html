@@ -1,0 +1,76 @@
+<template>
+  <style>
+    #root { position:absolute; inset:0; overflow:hidden; font-family:'Outfit',sans-serif; color:#111122; background:#ffffff; }
+    .w { display:inline-block; }
+    .mono { font-family:'IBM Plex Mono',monospace; }
+
+    #x-wrap { position:absolute; inset:0; }
+    #x-label { position:absolute; left:140px; top:120px; font-size:40px; font-weight:500; color:#0000ec; }
+    .x-row { position:absolute; left:140px; width:1640px; height:84px; }
+    .x-name { position:absolute; left:0; top:0; width:840px; height:84px; display:flex; align-items:center; font-size:37px; font-weight:500; line-height:1.15; }
+    .x-bar { position:absolute; left:880px; top:10px; height:64px; border-radius:14px; border:3px solid #111122; transform-origin:0 50%; }
+    .x-num { position:absolute; top:10px; height:64px; width:260px; display:flex; align-items:center; font-size:44px; font-weight:600; }
+    #x-line { position:absolute; left:140px; top:850px; font-size:76px; font-weight:700; letter-spacing:-0.02em; white-space:nowrap; }
+
+    #x-line { white-space:nowrap; font-size:62px !important; }
+    #x-line .acc { color:#0000ec; }
+
+  </style>
+  <div id="root" data-composition-id="fix" data-width="1920" data-height="1080">
+    <div id="x-wrap">
+      <div id="x-label" class="mono">After checking every post</div>
+      <div class="x-row" style="top:250px">
+        <div class="x-name">Diverse perspectives and better problem solving</div>
+        <div class="x-bar" id="x-bar-0" style="background:#ffff78;width:572px"></div>
+        <div class="x-num mono" id="x-num-0" style="left:1020px">13</div>
+      </div>
+      <div class="x-row" style="top:358px">
+        <div class="x-name">Accessibility representation and understanding users</div>
+        <div class="x-bar" id="x-bar-1" style="background:#d7ff86;width:572px"></div>
+        <div class="x-num mono" id="x-num-1" style="left:1020px">12</div>
+      </div>
+      <div class="x-row" style="top:466px">
+        <div class="x-name">Reducing bias and preventing overlooked harms</div>
+        <div class="x-bar" id="x-bar-2" style="background:#c386ff;width:572px"></div>
+        <div class="x-num mono" id="x-num-2" style="left:1020px">12</div>
+      </div>
+      <div class="x-row" style="top:574px">
+        <div class="x-name">Business and market benefits</div>
+        <div class="x-bar" id="x-bar-3" style="background:#ff86ff;width:572px"></div>
+        <div class="x-num mono" id="x-num-3" style="left:1020px">2</div>
+      </div>
+      <div class="x-row" style="top:682px">
+        <div class="x-name">Limitations and implementation challenges</div>
+        <div class="x-bar" id="x-bar-4" style="background:#ff86c3;width:572px"></div>
+        <div class="x-num mono" id="x-num-4" style="left:1020px">6</div>
+      </div>
+      <div id="x-line"><span class="w xl-w">Copilot</span> <span class="w xl-w">made</span> <span class="w xl-w">the</span> <span class="w xl-w">padlet</span> <span class="w xl-w">look</span> <span class="w acc xl-w">more</span> <span class="w acc xl-w">positive</span> <span class="w xl-w">than</span> <span class="w xl-w">it</span> <span class="w xl-w">is.</span></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const wordsIn = (sel, at, gap) => tl.fromTo(sel, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.16, ease: "power2.out", stagger: gap || 0.07 }, at);
+      tl.fromTo("#x-bar-0", { scaleX: 1.0000 }, { scaleX: 0.9231, duration: 0.6, ease: "power3.inOut", immediateRender: true }, 0.75);
+      tl.fromTo("#x-num-0", { x: 456 }, { x: 412, duration: 0.6, ease: "power3.inOut", immediateRender: true }, 0.75);
+      tl.set("#x-num-0", { innerText: "13 → 12" }, 1.05);
+      tl.fromTo("#x-bar-1", { scaleX: 0.9231 }, { scaleX: 0.8462, duration: 0.6, ease: "power3.inOut", immediateRender: true }, 0.75);
+      tl.fromTo("#x-num-1", { x: 412 }, { x: 368, duration: 0.6, ease: "power3.inOut", immediateRender: true }, 0.75);
+      tl.set("#x-num-1", { innerText: "12 → 11" }, 1.05);
+      tl.fromTo("#x-bar-2", { scaleX: 0.9231 }, { scaleX: 0.8462, duration: 0.6, ease: "power3.inOut", immediateRender: true }, 0.75);
+      tl.fromTo("#x-num-2", { x: 412 }, { x: 368, duration: 0.6, ease: "power3.inOut", immediateRender: true }, 0.75);
+      tl.set("#x-num-2", { innerText: "12 → 11" }, 1.05);
+      tl.fromTo("#x-bar-3", { scaleX: 0.1538 }, { scaleX: 0.3077, duration: 0.6, ease: "power3.inOut", immediateRender: true }, 0.75);
+      tl.fromTo("#x-num-3", { x: -28 }, { x: 60, duration: 0.6, ease: "power3.inOut", immediateRender: true }, 0.75);
+      tl.set("#x-num-3", { innerText: "2 → 4" }, 1.05);
+      tl.fromTo("#x-bar-4", { scaleX: 0.4615 }, { scaleX: 0.5385, duration: 0.6, ease: "power3.inOut", immediateRender: true }, 0.75);
+      tl.fromTo("#x-num-4", { x: 148 }, { x: 192, duration: 0.6, ease: "power3.inOut", immediateRender: true }, 0.75);
+      tl.set("#x-num-4", { innerText: "6 → 7" }, 1.05);
+      tl.fromTo("#x-wrap", { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power2.out" }, 0);
+      wordsIn(".xl-w", 0.3, 0.06);
+      tl.fromTo("#x-wrap", { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(8px)", duration: 0.18, ease: "power2.in", immediateRender: false }, 3.07);
+
+      window.__timelines["fix"] = tl;
+    })();
+  </script>
+</template>

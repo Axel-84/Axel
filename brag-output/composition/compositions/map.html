@@ -1,0 +1,31 @@
+<template>
+  <style>
+    #root { position:absolute; inset:0; overflow:hidden; font-family:'Outfit',sans-serif; color:#111122; background:#ffffff; }
+    .w { display:inline-block; }
+    .mono { font-family:'IBM Plex Mono',monospace; }
+
+    #m-wrap { position:absolute; inset:0; }
+    #m-imgbox { position:absolute; left:60px; top:90px; width:1800px; height:717px; }
+    #m-img { width:1800px; height:717px; display:block; }
+    #m-cap { position:absolute; left:0; width:1920px; top:880px; text-align:center; font-size:60px; font-weight:700; letter-spacing:-0.01em; }
+    #m-cap .acc { color:#0000ec; }
+
+  </style>
+  <div id="root" data-composition-id="map" data-width="1920" data-height="1080">
+    <div id="m-wrap">
+      <div id="m-imgbox"><img id="m-img" src="assets/img/mindmap.png" alt="Mind map of the five themes" /></div>
+      <div id="m-cap"><span class="w acc mc-w">45</span> <span class="w mc-w">of</span> <span class="w acc mc-w">45</span> <span class="w mc-w">posts</span> <span class="w mc-w">checked.</span></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const wordsIn = (sel, at, gap) => tl.fromTo(sel, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.16, ease: "power2.out", stagger: gap || 0.07 }, at);
+      // beat-locked: 16.38s — the mind map settles
+      tl.fromTo("#m-imgbox", { opacity: 0, scale: 1.12, filter: "blur(14px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }, 0);
+      wordsIn(".mc-w", 0.55, 0.08);
+
+      window.__timelines["map"] = tl;
+    })();
+  </script>
+</template>

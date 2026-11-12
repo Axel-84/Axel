@@ -1,0 +1,32 @@
+<template>
+  <style>
+    #root { position:absolute; inset:0; overflow:hidden; font-family:'Outfit',sans-serif; color:#ffffff; background:#0000ec; }
+    .w { display:inline-block; }
+    .mono { font-family:'IBM Plex Mono',monospace; }
+
+    #o-halo { position:absolute; left:260px; top:40px; width:1400px; height:1000px; background:radial-gradient(closest-side, rgba(255,255,255,0.28), rgba(255,255,255,0)); opacity:0; }
+    #o-l1 { position:absolute; left:0; width:1920px; top:340px; text-align:center; font-size:128px; font-weight:700; letter-spacing:-0.02em; }
+    #o-l2 { position:absolute; left:0; width:1920px; top:500px; text-align:center; font-size:128px; font-weight:700; letter-spacing:-0.02em; }
+    #o-sub { position:absolute; left:0; width:1920px; top:740px; text-align:center; font-size:40px; font-weight:500; }
+
+  </style>
+  <div id="root" data-composition-id="outro" data-width="1920" data-height="1080">
+    <div id="o-halo" data-layout-ignore></div>
+    <div id="o-l1"><span class="w o1-w">Number</span> <span class="w o1-w">every</span> <span class="w o1-w">post.</span></div>
+    <div id="o-l2"><span class="w o2-w">Check</span> <span class="w o2-w">every</span> <span class="w o2-w">post.</span></div>
+    <div id="o-sub" class="mono">CO3101 CW1 · Question 3</div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const wordsIn = (sel, at, gap) => tl.fromTo(sel, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.16, ease: "power2.out", stagger: gap || 0.07 }, at);
+      // audio-reactive: halo strength = peak music RMS over the outro (0.83)
+      tl.fromTo("#o-halo", { opacity: 0, scale: 0.8 }, { opacity: 0.83, scale: 1, duration: 0.9, ease: "power2.out" }, 0);
+      wordsIn(".o1-w", 0.04, 0.09); // beat-locked: 19.66s
+      wordsIn(".o2-w", 0.53, 0.09); // beat 20.19
+      tl.fromTo("#o-sub", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 1.2);
+
+      window.__timelines["outro"] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,78 @@
+<template>
+  <style>
+    #root { position:absolute; inset:0; overflow:hidden; font-family:'Outfit',sans-serif; color:#111122; background:#ffffff; }
+    .w { display:inline-block; }
+    .mono { font-family:'IBM Plex Mono',monospace; }
+
+    #f-wrap { position:absolute; inset:0; }
+    #f-label { position:absolute; left:140px; top:120px; font-size:40px; font-weight:500; color:#0000ec; }
+    .f-row { position:absolute; left:140px; width:1640px; height:84px; }
+    .f-name { position:absolute; left:0; top:0; width:840px; height:84px; display:flex; align-items:center; font-size:37px; font-weight:500; line-height:1.15; }
+    .f-bar { position:absolute; left:880px; top:10px; height:64px; border-radius:14px; border:3px solid #111122; transform-origin:0 50%; }
+    .f-num { position:absolute; top:10px; height:64px; width:120px; display:flex; align-items:center; font-size:44px; font-weight:600; }
+    #f-line { position:absolute; left:140px; top:850px; font-size:76px; font-weight:700; letter-spacing:-0.02em; white-space:nowrap; }
+
+    #f-total { position:absolute; left:1020px; top:800px; display:flex; align-items:center; gap:28px; font-size:44px; font-weight:500; }
+    #f-total-badge { position:relative; padding:14px 34px; border-radius:14px; background:#0000ec; color:#ffffff; font-size:64px; font-weight:600; }
+    #f-glow { position:absolute; inset:-30px; border-radius:40px; background:radial-gradient(closest-side, rgba(0,0,236,0.55), rgba(0,0,236,0)); opacity:0; }
+    #f-total-badge span { position:relative; }
+
+  </style>
+  <div id="root" data-composition-id="first" data-width="1920" data-height="1080">
+    <div id="f-wrap">
+      <div id="f-label" class="mono">Copilot's first grouping</div>
+      <div class="f-row" style="top:250px">
+        <div class="f-name">Diverse perspectives and better problem solving</div>
+        <div class="f-bar" id="f-bar-0" style="background:#ffff78;width:572px"></div>
+        <div class="f-num mono" id="f-num-0" style="left:1020px">13</div>
+      </div>
+      <div class="f-row" style="top:358px">
+        <div class="f-name">Accessibility representation and understanding users</div>
+        <div class="f-bar" id="f-bar-1" style="background:#d7ff86;width:572px"></div>
+        <div class="f-num mono" id="f-num-1" style="left:1020px">12</div>
+      </div>
+      <div class="f-row" style="top:466px">
+        <div class="f-name">Reducing bias and preventing overlooked harms</div>
+        <div class="f-bar" id="f-bar-2" style="background:#c386ff;width:572px"></div>
+        <div class="f-num mono" id="f-num-2" style="left:1020px">12</div>
+      </div>
+      <div class="f-row" style="top:574px">
+        <div class="f-name">Business and market benefits</div>
+        <div class="f-bar" id="f-bar-3" style="background:#ff86ff;width:572px"></div>
+        <div class="f-num mono" id="f-num-3" style="left:1020px">2</div>
+      </div>
+      <div class="f-row" style="top:682px">
+        <div class="f-name">Limitations and implementation challenges</div>
+        <div class="f-bar" id="f-bar-4" style="background:#ff86c3;width:572px"></div>
+        <div class="f-num mono" id="f-num-4" style="left:1020px">6</div>
+      </div>
+      <div id="f-total"><span>Total adds up to</span><div id="f-total-badge" class="mono"><div id="f-glow" data-layout-ignore></div><span>45</span></div></div>
+      <div id="f-line"><span class="w fl-w">The</span> <span class="w fl-w">total</span> <span class="w fl-w">was</span> <span class="w fl-w">correct.</span></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const wordsIn = (sel, at, gap) => tl.fromTo(sel, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.16, ease: "power2.out", stagger: gap || 0.07 }, at);
+      tl.fromTo("#f-bar-0", { scaleX: 0 }, { scaleX: 1.0000, duration: 0.55, ease: "expo.out" }, 0.30);
+      tl.fromTo("#f-num-0", { opacity: 0, x: 0 }, { opacity: 1, x: 456, duration: 0.55, ease: "expo.out" }, 0.30);
+      tl.fromTo("#f-bar-1", { scaleX: 0 }, { scaleX: 0.9231, duration: 0.55, ease: "expo.out" }, 0.48);
+      tl.fromTo("#f-num-1", { opacity: 0, x: 0 }, { opacity: 1, x: 412, duration: 0.55, ease: "expo.out" }, 0.48);
+      tl.fromTo("#f-bar-2", { scaleX: 0 }, { scaleX: 0.9231, duration: 0.55, ease: "expo.out" }, 0.66);
+      tl.fromTo("#f-num-2", { opacity: 0, x: 0 }, { opacity: 1, x: 412, duration: 0.55, ease: "expo.out" }, 0.66);
+      tl.fromTo("#f-bar-3", { scaleX: 0 }, { scaleX: 0.1538, duration: 0.55, ease: "expo.out" }, 0.84);
+      tl.fromTo("#f-num-3", { opacity: 0, x: 0 }, { opacity: 1, x: -28, duration: 0.55, ease: "expo.out" }, 0.84);
+      tl.fromTo("#f-bar-4", { scaleX: 0 }, { scaleX: 0.4615, duration: 0.55, ease: "expo.out" }, 1.02);
+      tl.fromTo("#f-num-4", { opacity: 0, x: 0 }, { opacity: 1, x: 148, duration: 0.55, ease: "expo.out" }, 1.02);
+      tl.fromTo("#f-label", { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power2.out" }, 0.1);
+      tl.fromTo(".f-name", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.4, ease: "power4.out", stagger: 0.18 }, 0.3);
+      // beat-locked: 6.00s (scene 2.18) — the total lands
+      tl.fromTo("#f-total", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.4)" }, 2.14);
+      // audio-reactive: glow strength = peak music RMS over 6.5–8.7s (0.41)
+      tl.fromTo("#f-glow", { opacity: 0 }, { opacity: 0.41, duration: 0.5, ease: "power2.out" }, 2.2);
+      wordsIn(".fl-w", 2.7, 0.08); // beat 6.56
+
+      window.__timelines["first"] = tl;
+    })();
+  </script>
+</template>

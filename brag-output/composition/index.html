@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[{"id": "color-ground", "type": "color", "label": "Background", "default": "#ffffff"}, {"id": "color-ink", "type": "color", "label": "Text", "default": "#111122"}, {"id": "color-accent", "type": "color", "label": "Accent", "default": "#0000ec"}]'>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #ffffff; }
+      #root { position: relative; width: 1920px; height: 1080px; font-family: 'Outfit', sans-serif; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="23.5" data-width="1920" data-height="1080">
+      <div id="hook" class="clip" data-composition-id="hook" data-composition-src="compositions/hook.html" data-start="0" data-duration="3.82" data-track-index="1" data-track-kind="graphics" data-width="1920" data-height="1080"></div>
+      <div id="first" class="clip" data-composition-id="first" data-composition-src="compositions/first.html" data-start="3.82" data-duration="4.92" data-track-index="1" data-track-kind="graphics" data-width="1920" data-height="1080"></div>
+      <div id="catch" class="clip" data-composition-id="catch" data-composition-src="compositions/catch.html" data-start="8.74" data-duration="4.37" data-track-index="1" data-track-kind="graphics" data-width="1920" data-height="1080"></div>
+      <div id="fix" class="clip" data-composition-id="fix" data-composition-src="compositions/fix.html" data-start="13.11" data-duration="3.27" data-track-index="1" data-track-kind="graphics" data-width="1920" data-height="1080"></div>
+      <div id="map" class="clip" data-composition-id="map" data-composition-src="compositions/map.html" data-start="16.38" data-duration="3.28" data-track-index="1" data-track-kind="graphics" data-width="1920" data-height="1080"></div>
+      <div id="outro" class="clip" data-composition-id="outro" data-composition-src="compositions/outro.html" data-start="19.66" data-duration="3.84" data-track-index="1" data-track-kind="graphics" data-width="1920" data-height="1080"></div>
+      <audio id="music" class="clip" data-timeline-role="music" data-start="0" data-duration="23.5" data-track-index="10" data-volume="0.32" data-fade-in="0.3" data-fade-out="1.6" src="assets/music/happy-beats-business-moves-vol-12-by-ende-dot-app.mp3"></audio>
+      <audio id="sfx-drop" class="clip" data-start="0.46" data-duration="0.1" data-track-index="11" data-volume="0.6" src="assets/sfx/drop_001.ogg"></audio>
+      <audio id="sfx-hit" class="clip" data-start="8.7" data-duration="0.18" data-track-index="12" data-volume="0.7" src="assets/sfx/impactSoft_medium_001.ogg"></audio>
+      <audio id="sfx-card1" class="clip" data-start="9.27" data-duration="0.7" data-track-index="13" data-volume="0.6" src="assets/sfx/card-place-1.ogg"></audio>
+      <audio id="sfx-card2" class="clip" data-start="9.81" data-duration="0.5" data-track-index="14" data-volume="0.6" src="assets/sfx/card-place-2.ogg"></audio>
+      <audio id="sfx-card3" class="clip" data-start="10.35" data-duration="0.9" data-track-index="15" data-volume="0.6" src="assets/sfx/card-place-3.ogg"></audio>
+      <audio id="sfx-card4" class="clip" data-start="10.91" data-duration="0.6" data-track-index="16" data-volume="0.6" src="assets/sfx/card-place-4.ogg"></audio>
+      <audio id="sfx-bell" class="clip" data-start="19.62" data-duration="0.7" data-track-index="17" data-volume="0.6" src="assets/sfx/impactBell_heavy_003.ogg"></audio>
+    </div>
+    <script>
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+    </script>
+  </body>
+</html>

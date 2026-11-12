@@ -1,0 +1,52 @@
+<template>
+  <style>
+    #root { position:absolute; inset:0; overflow:hidden; font-family:'Outfit',sans-serif; color:#ffffff; background:#111122; }
+    .w { display:inline-block; }
+    .mono { font-family:'IBM Plex Mono',monospace; }
+
+    #c-wrap { position:absolute; inset:0; }
+    #c-head { position:absolute; left:140px; top:150px; font-size:88px; font-weight:700; letter-spacing:-0.02em; white-space:nowrap; }
+    #c-head .acc { color:#ff86c3; }
+    .c-card { position:absolute; width:810px; height:260px; border-radius:22px; background:#22223f; border:3px solid #44446a; padding:34px 40px; }
+    .c-top { display:flex; align-items:center; gap:28px; }
+    .c-chip { padding:6px 22px; border-radius:12px; color:#111122; font-size:38px; font-weight:600; }
+    .c-to { font-size:36px; font-weight:500; }
+    .c-quote { margin-top:34px; font-size:46px; font-weight:500; color:#ffffff; white-space:nowrap; }
+
+  </style>
+  <div id="root" data-composition-id="catch" data-width="1920" data-height="1080">
+    <div id="c-wrap">
+      <div id="c-head"><span class="w ch-w">But</span> <span class="w acc ch-w">four</span> <span class="w ch-w">posts</span> <span class="w ch-w">were</span> <span class="w ch-w">in</span> <span class="w ch-w">the</span> <span class="w ch-w">wrong</span> <span class="w ch-w">theme.</span></div>
+      <div class="c-card" id="c-card-0" style="left:140px;top:400px">
+        <div class="c-top"><div class="c-chip mono" style="background:#ff86c3">P8</div><div class="c-to mono" style="color:#ff86c3">→ Limitations</div></div>
+        <div class="c-quote">“if handled well”</div>
+      </div>
+      <div class="c-card" id="c-card-1" style="left:970px;top:400px">
+        <div class="c-top"><div class="c-chip mono" style="background:#ff86c3">P43</div><div class="c-to mono" style="color:#ff86c3">→ Limitations</div></div>
+        <div class="c-quote">“not inherently bad”</div>
+      </div>
+      <div class="c-card" id="c-card-2" style="left:140px;top:690px">
+        <div class="c-top"><div class="c-chip mono" style="background:#ff86ff">P22</div><div class="c-to mono" style="color:#ff86ff">→ Business</div></div>
+        <div class="c-quote">“reach bigger target audiences”</div>
+      </div>
+      <div class="c-card" id="c-card-3" style="left:970px;top:690px">
+        <div class="c-top"><div class="c-chip mono" style="background:#ff86ff">P31</div><div class="c-to mono" style="color:#ff86ff">→ Business</div></div>
+        <div class="c-quote">“pressure on companies / businesses”</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const wordsIn = (sel, at, gap) => tl.fromTo(sel, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.16, ease: "power2.out", stagger: gap || 0.07 }, at);
+      wordsIn(".ch-w", 0.06, 0.07); // beat-locked: 8.74s
+      tl.fromTo("#c-card-0", { opacity: 0, y: 40, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "expo.out" }, 0.55); // beat-grid: card 1 at 9.29s
+      tl.fromTo("#c-card-1", { opacity: 0, y: 40, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "expo.out" }, 1.09); // beat-grid: card 2 at 9.83s
+      tl.fromTo("#c-card-2", { opacity: 0, y: 40, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "expo.out" }, 1.63); // beat-grid: card 3 at 10.37s
+      tl.fromTo("#c-card-3", { opacity: 0, y: 40, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "expo.out" }, 2.19); // beat-grid: card 4 at 10.93s
+      tl.fromTo("#c-wrap", { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(8px)", duration: 0.18, ease: "power2.in" }, 4.17);
+
+      window.__timelines["catch"] = tl;
+    })();
+  </script>
+</template>
