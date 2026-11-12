@@ -15,6 +15,9 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="VolleyStats">
   <link rel="stylesheet" href="styles.css">
+  <script>
+    try { var t = localStorage.getItem('volleystats.theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
 </head>
 <body>
   <header class="topbar">

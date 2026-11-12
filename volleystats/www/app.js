@@ -45,6 +45,22 @@ function save() {
 }
 try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) { /* ignore */ }
 
+/* ---------- appearance (Automatic / Light / Dark) ---------- */
+const THEME_KEY = 'volleystats.theme';
+function getTheme() { try { return localStorage.getItem(THEME_KEY) || 'auto'; } catch (e) { return 'auto'; } }
+function applyTheme(t) {
+  const root = document.documentElement;
+  if (t === 'light' || t === 'dark') root.dataset.theme = t; else delete root.dataset.theme;
+  try { t === 'auto' ? localStorage.removeItem(THEME_KEY) : localStorage.setItem(THEME_KEY, t); } catch (e) { /* ignore */ }
+  // status bar / browser chrome colour
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => {
+    const isDark = m.media.includes('dark');
+    if (t === 'auto') m.content = isDark ? '#151617' : '#f3f1ed';
+    else m.content = t === 'dark' ? '#151617' : '#f3f1ed';
+  });
+}
+applyTheme(getTheme());
+
 /* ---------- helpers ---------- */
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -730,7 +746,13 @@ function scaleGuideHTML() {
 function viewSettings() {
   setChrome({ title: 'More', tab: 'settings', large: true });
   const nEv = db.matches.reduce((a, m) => a + m.events.length, 0);
+  const theme = getTheme();
+  const opt = (v, label) => `<button data-theme-opt="${v}" class="${theme === v ? 'on' : ''}" aria-pressed="${theme === v}">
+      <span class="sw ${v}"><span></span><i></i></span><span>${label}</span><span class="tick"></span></button>`;
   app.innerHTML = `
+    <h2>Appearance</h2>
+    <div class="card"><div class="appearance">${opt('light', 'Light')}${opt('dark', 'Dark')}${opt('auto', 'Automatic')}</div>
+      <p class="small muted" style="margin:12px 0 0">Automatic follows your phone's light/dark setting.</p></div>
     ${scaleGuideHTML()}
     <div class="card stack">
       <h3 style="margin-top:0">Your data</h3>
@@ -755,6 +777,10 @@ function viewSettings() {
       Laptop shortcuts: Space play/pause, &larr; / &rarr; skip 3 seconds.
       <p>VolleyStats v1.0</p>
     </div>`;
+  $$('[data-theme-opt]').forEach(b => b.onclick = () => {
+    applyTheme(b.dataset.themeOpt);
+    $$('[data-theme-opt]').forEach(x => { const on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); });
+  });
   $('#backup').onclick = () => saveFile(`volleystats-backup-${today()}.json`, JSON.stringify(db, null, 1), 'application/json');
   $('#restore').onchange = e => {
     const f = e.target.files[0]; if (!f) return;
