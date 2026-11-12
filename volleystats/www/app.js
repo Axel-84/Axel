@@ -71,8 +71,10 @@ function confirmDo(msg) { return window.confirm(msg); }
 const app = $('#app');
 let cleanup = null;
 
-function setChrome({ title, back, tab, tabs = true, right = '' }) {
-  $('#title').textContent = title;
+function setChrome({ title, back, tab, tabs = true, right = '', large = false }) {
+  $('#title').textContent = large ? '' : title;
+  $('#largeTitle').textContent = large ? title : '';
+  $('#largeTitle').hidden = !large;
   const b = $('#backBtn');
   b.style.visibility = back ? 'visible' : 'hidden';
   b.onclick = () => { location.hash = back; };
@@ -105,7 +107,7 @@ window.addEventListener('hashchange', route);
    MATCHES
    ============================================================ */
 function viewMatches() {
-  setChrome({ title: 'VolleyStats', tab: 'matches', right: db.teams.length ? '<a class="btn sm" href="#/new-match">+ New</a>' : '' });
+  setChrome({ title: 'Matches', tab: 'matches', large: true, right: db.teams.length ? '<a class="nav-action" href="#/new-match" aria-label="New match">+</a>' : '' });
   if (!db.teams.length) {
     app.innerHTML = `
       <div class="card empty">
@@ -139,7 +141,7 @@ function viewMatches() {
    TEAMS
    ============================================================ */
 function viewTeams() {
-  setChrome({ title: 'Teams', tab: 'teams' });
+  setChrome({ title: 'Teams', tab: 'teams', large: true });
   app.innerHTML = `
     <div class="card">
       <form id="newTeam" class="row">
@@ -324,7 +326,7 @@ function viewTag(id) {
   const t = team(m.teamId) || { name: 'Team', players: [] };
   setChrome({
     title: `vs ${m.opponent || 'Opponent'}`, back: '#/matches', tab: 'matches', tabs: false,
-    right: `<a class="btn sm" href="#/match/${m.id}/stats">Stats</a>`
+    right: `<a class="nav-action text" href="#/match/${m.id}/stats">Stats</a>`
   });
   let curSet = m.lastSet || 1;
   let selected = null;
@@ -635,7 +637,7 @@ function viewMatchStats(id) {
 }
 
 function viewSeason(teamId) {
-  setChrome({ title: 'Season stats', tab: 'season' });
+  setChrome({ title: 'Season', tab: 'season', large: true });
   if (!db.teams.length) { app.innerHTML = '<div class="card empty"><p>Add a team and tag a match to see season stats.</p><a class="btn primary" href="#/teams">Add team</a></div>'; return; }
   const t = team(teamId) || db.teams[0];
   const ms = db.matches.filter(m => m.teamId === t.id).sort((a, b) => (a.date || '').localeCompare(b.date || ''));
@@ -726,7 +728,7 @@ function scaleGuideHTML() {
 }
 
 function viewSettings() {
-  setChrome({ title: 'More', tab: 'settings' });
+  setChrome({ title: 'More', tab: 'settings', large: true });
   const nEv = db.matches.reduce((a, m) => a + m.events.length, 0);
   app.innerHTML = `
     ${scaleGuideHTML()}

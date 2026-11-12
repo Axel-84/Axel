@@ -5,27 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>VolleyStats</title>
   <meta name="description" content="Tag serve receive and serving from your match video and get player stats instantly.">
-  <meta name="theme-color" content="#1e40af">
+  <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="VolleyStats">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="topbar">
-    <button id="backBtn" class="icon-btn" aria-label="Back" style="visibility:hidden">&#8249;</button>
+    <button id="backBtn" class="back-btn" aria-label="Back" style="visibility:hidden"><svg viewBox="0 0 12 20" width="12" height="20" aria-hidden="true"><path d="M10 2 2 10l8 8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</button>
     <h1 id="title">VolleyStats</h1>
     <span id="topRight"></span>
   </header>
+  <h1 id="largeTitle" class="large-title" hidden></h1>
   <main id="app"></main>
   <nav class="tabbar" id="tabbar">
-    <a href="#/matches" data-tab="matches"><span class="ti">&#127952;</span>Matches</a>
-    <a href="#/teams" data-tab="teams"><span class="ti">&#128101;</span>Teams</a>
-    <a href="#/season" data-tab="season"><span class="ti">&#128202;</span>Season</a>
-    <a href="#/settings" data-tab="settings"><span class="ti">&#9881;</span>More</a>
+    <a href="#/matches" data-tab="matches"><svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3c3 3 4 7 3 11M4 9c4-1 8 0 11 5M6 19c2-4 6-6 13-5"/></svg>Matches</a>
+    <a href="#/teams" data-tab="teams"><svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17" cy="9" r="2.6"/><path d="M16.5 14.2c2.9.2 5 2.2 5 5.3"/></svg>Teams</a>
+    <a href="#/season" data-tab="season"><svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="12" width="4" height="8" rx="1"/><rect x="10" y="7" width="4" height="13" rx="1"/><rect x="16" y="3" width="4" height="17" rx="1"/></svg>Season</a>
+    <a href="#/settings" data-tab="settings"><svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>More</a>
   </nav>
   <div id="toast" role="status" aria-live="polite"></div>
   <script src="app.js"></script>

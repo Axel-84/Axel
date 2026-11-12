@@ -13,6 +13,18 @@ The owner is a beginner: explain changes in plain language, keep steps simple.
 - `dev/phone-preview.html`: iPhone frame used with VS Code **Live Preview** (`Ctrl+Shift+P` → Live Preview: Start Server).
 - `android/`: Capacitor Android project. After changing `www/`, `npx cap sync android`. GitHub Actions builds the APK.
 
+## Design: Apple style (iOS Human Interface Guidelines)
+The app must look and feel like a native iPhone app. Always follow these when adding or changing UI:
+- iOS system colours from the tokens in `styles.css` (`--blue` #007AFF, `--green`, `--orange`, `--red`, `--teal`, `--gray`); never hard-code new colours.
+- Grouped background `--bg` with white inset grouped cells (`.card`, radius 10, no borders, hairline `.5px` separators).
+- Root tabs use a **large title** (`setChrome({ large: true })`); pushed screens use the small centred nav-bar title and a blue "‹ Back".
+- Frosted translucent nav bar and tab bar (backdrop blur). Tab bar: outline icons, blue when active.
+- Font is the system font (SF Pro on iPhone): 17px body, 13px uppercase grey section headers (`h2`), 34px bold large titles.
+- Buttons: filled blue (`.btn.primary`) for the main action, tinted (`.btn`) for secondary, plain blue text in the nav bar.
+- Pickers with 2–5 options use the iOS segmented control (`.seg`); checkboxes look like iOS round checkmarks.
+- Tap targets at least 44×44 pt. Support light and dark mode for every new screen.
+- Don't copy Apple's own icons/SF Symbols or app screens; draw simple outline SVG icons instead.
+
 ## Rules
 - The owner uses an iPhone: design mobile-first, test at 393px wide, big tap targets.
 - Bump `CACHE` in `www/sw.js` when shipping changes, so installed copies update.
