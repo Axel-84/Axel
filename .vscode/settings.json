@@ -1,0 +1,6 @@
+{
+  "livePreview.defaultPreviewPath": "/volleystats/dev/phone-preview.html",
+  "livePreview.autoRefreshPreview": "On Changes to Saved Files",
+  "livePreview.openPreviewTarget": "Embedded Preview",
+  "files.exclude": { "**/node_modules": true, "**/android/app/build": true }
+}
