@@ -109,7 +109,29 @@ function setChrome({ title, back, tab, tabs = true, right = '', large = false })
   b.onclick = () => { location.hash = back; };
   $('#topRight').innerHTML = right;
   document.body.classList.toggle('no-tabs', !tabs);
-  $$('#tabbar a').forEach(a => a.classList.toggle('active', a.dataset.tab === tab));
+  updateTabbar(tab);
+}
+
+// iPhone Safari only shows :active (pressed) styles when the page listens for touches.
+document.addEventListener('touchstart', () => {}, { passive: true });
+
+/* Bottom tab bar: highlight the current tab, slide the glow to it, pop its icon. */
+let lastTab = null;
+function updateTabbar(tab) {
+  const nav = $('#tabbar');
+  const links = $$('#tabbar a');
+  const idx = links.findIndex(a => a.dataset.tab === tab);
+  links.forEach(a => a.classList.toggle('active', a.dataset.tab === tab));
+  nav.classList.toggle('has-active', idx >= 0);
+  if (idx >= 0) nav.style.setProperty('--i', idx);
+  if (idx >= 0 && lastTab !== null && tab !== lastTab) {
+    const icon = $('.ti', links[idx]);
+    icon.classList.remove('pop');
+    void icon.getBoundingClientRect();   // restart the animation
+    icon.classList.add('pop');
+  }
+  lastTab = tab;
+  if (!nav.classList.contains('ready')) requestAnimationFrame(() => requestAnimationFrame(() => nav.classList.add('ready')));
 }
 
 function route() {

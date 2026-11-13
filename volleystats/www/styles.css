@@ -160,21 +160,54 @@ main { max-width: 1100px; margin: 0 auto; padding: 12px 16px 24px; }
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;
   padding: 6px;
   border-radius: 999px;
-  background: var(--bar);
-  -webkit-backdrop-filter: saturate(180%) blur(24px); backdrop-filter: saturate(180%) blur(24px);
+  /* Frosted glass: theme background with a hint of the accent, about half see-through */
+  background: var(--bar);   /* fallback for older phones */
+  background: color-mix(in srgb, color-mix(in srgb, var(--bg) 90%, var(--blue)) 55%, transparent);
+  -webkit-backdrop-filter: saturate(170%) blur(18px); backdrop-filter: saturate(170%) blur(18px);
   border: .5px solid var(--line);
-  box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.08);
+  box-shadow:
+    inset 0 .5px 0 color-mix(in srgb, var(--card) 70%, transparent),   /* soft top highlight */
+    0 1px 2px rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.07);
 }
 .tabbar a {
+  position: relative; z-index: 1;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
   border-radius: 999px;
   font-size: 10px; font-weight: 500; letter-spacing: .1px; color: var(--gray); text-decoration: none;
-  transition: background .2s, color .2s;
+  transition: color .25s, transform .45s cubic-bezier(.34, 1.56, .64, 1);   /* springy release */
 }
 .tabbar .ti { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .tabbar a[data-tab="season"] .ti, .tabbar a[data-tab="settings"] .ti { fill: currentColor; stroke: none; }
-.tabbar a.active { color: var(--blue); background: var(--tint-soft); font-weight: 600; }
-.tabbar a:active { transform: scale(.94); }
+.tabbar a.active { color: var(--blue); font-weight: 600; }
+/* Press: squish down quickly while the finger is on it */
+.tabbar a:active { transform: scale(.88); transition-duration: .25s, .12s; }
+
+/* Sliding highlight that glides to the selected tab (position set by app.js via --i) */
+.tab-glow {
+  position: absolute; top: 6px; bottom: 6px; left: 6px;
+  width: calc((100% - 24px) / 4);            /* 4 tabs, minus padding (12px) and gaps (12px) */
+  border-radius: 999px;
+  background: var(--tint-soft);
+  transform: translateX(calc(var(--i, 0) * (100% + 4px)));
+  opacity: 0;
+  transition: transform .5s cubic-bezier(.34, 1.3, .64, 1), opacity .2s;
+}
+.tabbar.has-active .tab-glow { opacity: 1; }
+.tabbar:not(.ready) .tab-glow { transition: none; }   /* no slide on first load */
+
+/* Icon pop when a tab becomes selected */
+.tabbar .ti.pop { animation: tab-pop .5s cubic-bezier(.34, 1.56, .64, 1); }
+@keyframes tab-pop {
+  0%   { transform: scale(1) translateY(0); }
+  35%  { transform: scale(1.22) translateY(-2px); }
+  100% { transform: scale(1) translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tabbar a, .tab-glow { transition: none; }
+  .tabbar a:active { transform: none; }
+  .tabbar .ti.pop { animation: none; }
+}
 
 /* ---------- Type ---------- */
 h2 {
