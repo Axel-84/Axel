@@ -48,17 +48,30 @@ try { navigator.storage && navigator.storage.persist && navigator.storage.persis
 /* ---------- appearance (Automatic / Light / Dark) ---------- */
 const THEME_KEY = 'volleystats.theme';
 function getTheme() { try { return localStorage.getItem(THEME_KEY) || 'auto'; } catch (e) { return 'auto'; } }
+const PALETTE_KEY = 'volleystats.palette';
+const PALETTES = {
+  navy: { name: 'Navy & Sand', light: '#ece4d4', dark: '#121722', dots: ['#2f4466', '#ece4d4', '#a5622f'] },
+  green: { name: 'Forest Green', light: '#f3f1ed', dark: '#151617', dots: ['#3b5745', '#f3f1ed', '#9c6838'] },
+};
+function getPalette() { try { const c = localStorage.getItem(PALETTE_KEY); return PALETTES[c] ? c : 'navy'; } catch (e) { return 'navy'; } }
+function applyPalette(c) {
+  document.documentElement.dataset.palette = c;
+  try { localStorage.setItem(PALETTE_KEY, c); } catch (e) { /* ignore */ }
+  applyTheme(getTheme());
+}
 function applyTheme(t) {
   const root = document.documentElement;
   if (t === 'light' || t === 'dark') root.dataset.theme = t; else delete root.dataset.theme;
   try { t === 'auto' ? localStorage.removeItem(THEME_KEY) : localStorage.setItem(THEME_KEY, t); } catch (e) { /* ignore */ }
   // status bar / browser chrome colour
+  const pal = PALETTES[getPalette()];
   document.querySelectorAll('meta[name="theme-color"]').forEach(m => {
     const isDark = m.media.includes('dark');
-    if (t === 'auto') m.content = isDark ? '#151617' : '#f3f1ed';
-    else m.content = t === 'dark' ? '#151617' : '#f3f1ed';
+    if (t === 'auto') m.content = isDark ? pal.dark : pal.light;
+    else m.content = t === 'dark' ? pal.dark : pal.light;
   });
 }
+document.documentElement.dataset.palette = getPalette();
 applyTheme(getTheme());
 
 /* ---------- helpers ---------- */
@@ -753,6 +766,12 @@ function viewSettings() {
     <h2>Appearance</h2>
     <div class="card"><div class="appearance">${opt('light', 'Light')}${opt('dark', 'Dark')}${opt('auto', 'Automatic')}</div>
       <p class="small muted" style="margin:12px 0 0">Automatic follows your phone's light/dark setting.</p></div>
+    <h2>Colour theme</h2>
+    <div class="card"><div class="palettes">${Object.entries(PALETTES).map(([k, v]) => `
+      <button data-palette-opt="${k}" class="${getPalette() === k ? 'on' : ''}" aria-pressed="${getPalette() === k}">
+        <span class="dots">${v.dots.map(c => `<i style="background:${c}"></i>`).join('')}</span>
+        <span class="pname">${v.name}<span class="tick"></span></span>
+      </button>`).join('')}</div></div>
     ${scaleGuideHTML()}
     <div class="card stack">
       <h3 style="margin-top:0">Your data</h3>
@@ -777,6 +796,10 @@ function viewSettings() {
       Laptop shortcuts: Space play/pause, &larr; / &rarr; skip 3 seconds.
       <p>VolleyStats v1.0</p>
     </div>`;
+  $$('[data-palette-opt]').forEach(b => b.onclick = () => {
+    applyPalette(b.dataset.paletteOpt);
+    $$('[data-palette-opt]').forEach(x => { const on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); });
+  });
   $$('[data-theme-opt]').forEach(b => b.onclick = () => {
     applyTheme(b.dataset.themeOpt);
     $$('[data-theme-opt]').forEach(x => { const on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); });

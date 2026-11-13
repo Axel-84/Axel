@@ -13,6 +13,12 @@ The owner is a beginner: explain changes in plain language, keep steps simple.
 - `dev/phone-preview.html`: iPhone frame used with VS Code **Live Preview** (`Ctrl+Shift+P` → Live Preview: Start Server).
 - `android/`: Capacitor Android project. After changing `www/`, `npx cap sync android`. GitHub Actions builds the APK.
 
+## Colour themes
+The app has two colour themes the user picks under **More → Colour theme**: **Navy & Sand** (default) and **Forest Green**.
+Each has a light and a dark block at the top of `www/styles.css` (`:root[data-palette="..."]`).
+Colour requests from the owner mean: edit the blocks of the theme they name, both light and dark, and keep the other theme unchanged.
+To add a theme: add its 4 blocks (light, dark in the media query, forced dark) and an entry in `PALETTES` in `app.js`.
+
 ## Design: Apple style (iOS Human Interface Guidelines)
 The app must look and feel like a native iPhone app. Always follow these when adding or changing UI:
 - **Matte palette** (owner's choice): soft, muted, low-saturation colours. Use only the tokens at the top of `styles.css` (`--blue` slate accent, `--green` sage, `--teal` steel, `--orange` clay, `--red` brick, `--gray`); never hard-code new colours and never use bright/neon iOS system colours. No glossy gradients or heavy shadows.

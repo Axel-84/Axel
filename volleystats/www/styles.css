@@ -5,7 +5,24 @@
    Change colours ONLY here.
    ========================================================== */
 :root {
-  /* Matte accent + grade colours (names kept from iOS for simplicity) */
+  /* Shared, non-colour settings */
+  --g3: var(--green); --g2: var(--teal); --g1: var(--orange); --g0: var(--red);
+  --radius: 12px;
+  --tabbar-h: 50px;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, Roboto, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, Roboto, sans-serif;
+  color-scheme: light;
+}
+
+/* ==========================================================
+   COLOUR THEMES: chosen in the app under More → Colour theme.
+   Each theme has a LIGHT block and a DARK block.
+   To tweak a theme, change only its blocks below.
+   (--blue is the main accent colour, whatever its name says.)
+   ========================================================== */
+
+/* ---------- Navy & Sand: light (default) ---------- */
+:root, :root[data-palette="navy"] {
   --blue: #2f4466;          /* matte navy: main accent, buttons, links, selected */
   --green: #587350;         /* sage (grade 3) */
   --teal: #4a6f80;          /* dusty steel (grade 2) */
@@ -13,7 +30,6 @@
   --red: #a3473a;           /* brick red (grade 0, delete) */
   --yellow: #c2a15a;        /* muted gold */
   --gray: #736d62;          /* sand grey */
-
   --bg: #ece4d4;            /* sand page */
   --card: #fdf9f0;          /* cream cards */
   --fill: rgba(110,95,70,.10);
@@ -25,17 +41,38 @@
   --danger-soft: rgba(163,71,58,.12);
   --seg-on: #fdf9f0;
   --card-edge: rgba(60,55,45,.08);
-
   --good: #4f6b48; --ok: #93602b; --bad: #9e4536;
-  --g3: var(--green); --g2: var(--teal); --g1: var(--orange); --g0: var(--red);
-
-  --radius: 12px;
-  --tabbar-h: 50px;
-  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, Roboto, sans-serif;
-  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, Roboto, sans-serif;
-  color-scheme: light;
+  /* swatch colours for the Appearance previews */
+  --pv-light-bg: #ece4d4; --pv-light-card: #fdf9f0; --pv-dark-bg: #121722; --pv-dark-card: #1b2230;
 }
+
+/* ---------- Forest Green: light ---------- */
+:root[data-palette="green"] {
+  --blue: #3b5745;          /* muted dark green: main accent, links, selected */
+  --green: #527a5f;         /* sage */
+  --teal: #53778d;          /* dusty steel blue */
+  --orange: #9c6838;        /* clay / ochre */
+  --red: #a9554d;           /* brick rose */
+  --yellow: #c2a35a;        /* muted gold */
+  --gray: #8f8a84;          /* warm grey */
+  --bg: #f3f1ed;            /* warm off-white page */
+  --card: #fffefc;          /* soft paper cards */
+  --fill: rgba(120,110,100,.10);
+  --text: #23262b;          /* soft ink */
+  --muted: rgba(45,48,54,.58);
+  --line: rgba(60,55,50,.16);
+  --bar: rgba(243,241,237,.82);
+  --tint-soft: rgba(59,87,69,.12);
+  --danger-soft: rgba(169,85,77,.12);
+  --seg-on: #fffefc;
+  --card-edge: rgba(60,55,50,.07);
+  --good: #4c7458; --ok: #9a6733; --bad: #a14a42;
+  --pv-light-bg: #f3f1ed; --pv-light-card: #fffefc; --pv-dark-bg: #151617; --pv-dark-card: #202224;
+}
+
+/* ---------- Dark blocks (used for Dark, or Automatic when the phone is dark) ---------- */
 @media (prefers-color-scheme: dark) {
+  /* Navy & Sand: dark */
   :root:not([data-theme="light"]) {
     --blue: #9db0cf; --green: #587350; --teal: #4a6f80; --orange: #a5622f; --red: #b85a46; --yellow: #c4a560; --gray: #8a8e98;
     --bg: #121722; --card: #1b2230; --fill: rgba(200,190,170,.08);
@@ -44,7 +81,16 @@
     --good: #a3bb98; --ok: #d8a46a; --bad: #db8b78;
     color-scheme: dark;
   }
+  /* Forest Green: dark */
+  :root[data-palette="green"]:not([data-theme="light"]) {
+    --blue: #8aa892; --green: #527a5f; --teal: #53778d; --orange: #9c6838; --red: #a3544c; --yellow: #b89c58; --gray: #8a857f;
+    --bg: #151617; --card: #202224; --fill: rgba(200,190,180,.08);
+    --text: #e9e6e1; --muted: rgba(233,230,225,.55); --line: rgba(233,230,225,.10);
+    --bar: rgba(21,22,23,.82); --tint-soft: rgba(138,168,146,.14); --danger-soft: rgba(196,120,110,.14); --seg-on: #3a3d41; --card-edge: rgba(255,255,255,.04);
+    --good: #8fb79a; --ok: #d0a06c; --bad: #d48a80;
+  }
 }
+/* Navy & Sand: dark (forced) */
 :root[data-theme="dark"] {
   --blue: #9db0cf; --green: #587350; --teal: #4a6f80; --orange: #a5622f; --red: #b85a46; --yellow: #c4a560; --gray: #8a8e98;
   --bg: #121722; --card: #1b2230; --fill: rgba(200,190,170,.08);
@@ -52,6 +98,14 @@
   --bar: rgba(18,23,34,.82); --tint-soft: rgba(157,176,207,.15); --danger-soft: rgba(205,120,100,.15); --seg-on: #333c4d; --card-edge: rgba(220,230,255,.05);
   --good: #a3bb98; --ok: #d8a46a; --bad: #db8b78;
   color-scheme: dark;
+}
+/* Forest Green: dark (forced) */
+:root[data-theme="dark"][data-palette="green"] {
+  --blue: #8aa892; --green: #527a5f; --teal: #53778d; --orange: #9c6838; --red: #a3544c; --yellow: #b89c58; --gray: #8a857f;
+  --bg: #151617; --card: #202224; --fill: rgba(200,190,180,.08);
+  --text: #e9e6e1; --muted: rgba(233,230,225,.55); --line: rgba(233,230,225,.10);
+  --bar: rgba(21,22,23,.82); --tint-soft: rgba(138,168,146,.14); --danger-soft: rgba(196,120,110,.14); --seg-on: #3a3d41; --card-edge: rgba(255,255,255,.04);
+  --good: #8fb79a; --ok: #d0a06c; --bad: #d48a80;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -287,10 +341,10 @@ body.no-tabs #toast { bottom: calc(24px + env(safe-area-inset-bottom)); }
   box-shadow: 0 0 0 1px var(--line); display: grid; grid-template-rows: 22% 1fr;
 }
 .appearance .sw i { display: block; }
-.appearance .sw.light { background: #f3f1ed; } .appearance .sw.light i { background: #fffefc; margin: 18% 12% 0; border-radius: 6px; }
-.appearance .sw.dark { background: #151617; } .appearance .sw.dark i { background: #202224; margin: 18% 12% 0; border-radius: 6px; }
-.appearance .sw.auto { background: linear-gradient(90deg, #f3f1ed 50%, #151617 50%); }
-.appearance .sw.auto i { background: linear-gradient(90deg, #fffefc 50%, #202224 50%); margin: 18% 12% 0; border-radius: 6px; }
+.appearance .sw.light { background: var(--pv-light-bg); } .appearance .sw.light i { background: var(--pv-light-card); margin: 18% 12% 0; border-radius: 6px; }
+.appearance .sw.dark { background: var(--pv-dark-bg); } .appearance .sw.dark i { background: var(--pv-dark-card); margin: 18% 12% 0; border-radius: 6px; }
+.appearance .sw.auto { background: linear-gradient(90deg, var(--pv-light-bg) 50%, var(--pv-dark-bg) 50%); }
+.appearance .sw.auto i { background: linear-gradient(90deg, var(--pv-light-card) 50%, var(--pv-dark-card) 50%); margin: 18% 12% 0; border-radius: 6px; }
 .appearance .tick {
   width: 22px; height: 22px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--gray);
   display: grid; place-items: center;
@@ -300,3 +354,19 @@ body.no-tabs #toast { bottom: calc(24px + env(safe-area-inset-bottom)); }
   content: ""; width: 5px; height: 10px; border: solid var(--card); border-width: 0 2px 2px 0; transform: translateY(-1px) rotate(45deg);
 }
 .appearance button.on .sw { box-shadow: 0 0 0 2px var(--blue); }
+
+/* ---------- Colour theme picker ---------- */
+.palettes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.palettes button {
+  display: flex; flex-direction: column; gap: 10px; align-items: flex-start; text-align: left;
+  border: 0; border-radius: var(--radius); padding: 12px; cursor: pointer; font: inherit; color: var(--text);
+  background: var(--fill);
+}
+.palettes button.on { box-shadow: 0 0 0 2px var(--blue); }
+.palettes .dots { display: flex; }
+.palettes .dots i { width: 26px; height: 26px; border-radius: 50%; box-shadow: 0 0 0 2px var(--card); }
+.palettes .dots i + i { margin-left: -6px; }
+.palettes .pname { display: flex; width: 100%; justify-content: space-between; align-items: center; font-weight: 600; font-size: 15px; }
+.palettes .tick { width: 20px; height: 20px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--gray); display: grid; place-items: center; flex: none; }
+.palettes button.on .tick { background: var(--blue); box-shadow: none; }
+.palettes button.on .tick::after { content: ""; width: 5px; height: 9px; border: solid var(--card); border-width: 0 2px 2px 0; transform: translateY(-1px) rotate(45deg); }

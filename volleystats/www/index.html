@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>VolleyStats</title>
   <meta name="description" content="Tag serve receive and serving from your match video and get player stats instantly.">
-  <meta name="theme-color" content="#f3f1ed" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#151617" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#ece4d4" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#121722" media="(prefers-color-scheme: dark)">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="styles.css">
   <script>
     try { var t = localStorage.getItem('volleystats.theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+    try { var c = localStorage.getItem('volleystats.palette'); if (c === 'green' || c === 'navy') document.documentElement.dataset.palette = c; } catch (e) {}
   </script>
 </head>
 <body>
