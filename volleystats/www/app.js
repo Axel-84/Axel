@@ -739,6 +739,11 @@ function exportCSV(name, events, players) {
 }
 
 async function saveFile(filename, text, mime) {
+  // Running inside the Expo app (mobile/): hand the file to the iPhone share sheet
+  if (window.ReactNativeWebView) {
+    window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'saveFile', filename, text, mime }));
+    return;
+  }
   const cap = window.Capacitor;
   if (cap && cap.isNativePlatform && cap.isNativePlatform() && cap.Plugins.Filesystem && cap.Plugins.Share) {
     try {
@@ -877,6 +882,6 @@ function addDemo() {
 
 /* ---------- boot ---------- */
 route();
-if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost') && !(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())) {
+if ('serviceWorker' in navigator && !window.ReactNativeWebView && (location.protocol === 'https:' || location.hostname === 'localhost') && !(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }

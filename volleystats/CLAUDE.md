@@ -11,6 +11,7 @@ The owner is a beginner: explain changes in plain language, keep steps simple.
   - Data lives in `localStorage` key `volleystats.v1`: `{ teams:[{id,name,players:[{id,number,name,pos}]}], matches:[{id,teamId,opponent,date,competition,squad:{playerId:pos},events:[{id,playerId,pos,type:'receive'|'serve',grade:0-3,set,t,ts}]}] }`.
     Keep old saved data working when changing this shape.
 - `dev/phone-preview.html`: iPhone frame used with VS Code **Live Preview** (`Ctrl+Shift+P` → Live Preview: Start Server).
+- `mobile/`: Expo app that shows `www/` in a WebView for testing in **Expo Go** (`cd mobile && npm start`, scan QR). Don't put app features here; build them in `www/`. Only use packages Expo Go already includes.
 - `android/`: Capacitor Android project. After changing `www/`, `npx cap sync android`. GitHub Actions builds the APK.
 
 ## Colour themes
