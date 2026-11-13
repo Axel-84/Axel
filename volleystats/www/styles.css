@@ -6,27 +6,27 @@
    ========================================================== */
 :root {
   /* Matte accent + grade colours (names kept from iOS for simplicity) */
-  --blue: #3b5745;          /* muted dark green: main accent, links, selected */
-  --green: #527a5f;         /* sage */
-  --teal: #53778d;          /* dusty steel blue */
-  --orange: #9c6838;        /* clay / ochre */
-  --red: #a9554d;           /* brick rose */
-  --yellow: #c2a35a;        /* muted gold */
-  --gray: #8f8a84;          /* warm grey */
+  --blue: #435a3f;          /* warm muted dark green: main accent, links, selected */
+  --green: #5c7a52;         /* warm sage */
+  --teal: #5e7482;          /* warm dusty slate */
+  --orange: #a26538;        /* clay / ochre */
+  --red: #ad5844;           /* terracotta brick */
+  --yellow: #c6a056;        /* muted gold */
+  --gray: #928a80;          /* warm grey */
 
-  --bg: #f3f1ed;            /* warm off-white page */
-  --card: #fffefc;          /* soft paper cards */
-  --fill: rgba(120,110,100,.10);
-  --text: #23262b;          /* soft ink instead of pure black */
-  --muted: rgba(45,48,54,.58);
-  --line: rgba(60,55,50,.16);
-  --bar: rgba(243,241,237,.82);
-  --tint-soft: rgba(59,87,69,.12);
-  --danger-soft: rgba(169,85,77,.12);
-  --seg-on: #fffefc;
-  --card-edge: rgba(60,55,50,.07);
+  --bg: #f5f0e8;            /* warm off-white page */
+  --card: #fffcf6;          /* soft paper cards */
+  --fill: rgba(130,110,85,.10);
+  --text: #2a2420;          /* soft ink instead of pure black */
+  --muted: rgba(56,46,38,.60);
+  --line: rgba(70,55,40,.16);
+  --bar: rgba(245,240,232,.82);
+  --tint-soft: rgba(67,90,63,.12);
+  --danger-soft: rgba(173,88,68,.12);
+  --seg-on: #fffcf6;
+  --card-edge: rgba(70,55,40,.07);
 
-  --good: #4c7458; --ok: #9a6733; --bad: #a14a42;
+  --good: #557346; --ok: #9e6630; --bad: #a54a3a;
   --g3: var(--green); --g2: var(--teal); --g1: var(--orange); --g0: var(--red);
 
   --radius: 12px;
@@ -37,20 +37,20 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --blue: #8aa892; --green: #527a5f; --teal: #53778d; --orange: #9c6838; --red: #a3544c; --yellow: #b89c58; --gray: #8a857f;
-    --bg: #151617; --card: #202224; --fill: rgba(200,190,180,.08);
-    --text: #e9e6e1; --muted: rgba(233,230,225,.55); --line: rgba(233,230,225,.10);
-    --bar: rgba(21,22,23,.82); --tint-soft: rgba(138,168,146,.14); --danger-soft: rgba(196,120,110,.14); --seg-on: #3a3d41; --card-edge: rgba(255,255,255,.04);
-    --good: #8fb79a; --ok: #d0a06c; --bad: #d48a80;
+    --blue: #9aa98a; --green: #5c7a52; --teal: #5e7482; --orange: #a26538; --red: #a8553f; --yellow: #bc9a52; --gray: #8d857b;
+    --bg: #181512; --card: #24201b; --fill: rgba(210,190,165,.08);
+    --text: #ede6dc; --muted: rgba(237,230,220,.55); --line: rgba(237,230,220,.10);
+    --bar: rgba(24,21,18,.82); --tint-soft: rgba(154,169,138,.14); --danger-soft: rgba(200,120,100,.14); --seg-on: #3d3832; --card-edge: rgba(255,255,255,.04);
+    --good: #9db88a; --ok: #d6a066; --bad: #d88a76;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --blue: #8aa892; --green: #527a5f; --teal: #53778d; --orange: #9c6838; --red: #a3544c; --yellow: #b89c58; --gray: #8a857f;
-  --bg: #151617; --card: #202224; --fill: rgba(200,190,180,.08);
-  --text: #e9e6e1; --muted: rgba(233,230,225,.55); --line: rgba(233,230,225,.10);
-  --bar: rgba(21,22,23,.82); --tint-soft: rgba(138,168,146,.14); --danger-soft: rgba(196,120,110,.14); --seg-on: #3a3d41; --card-edge: rgba(255,255,255,.04);
-  --good: #8fb79a; --ok: #d0a06c; --bad: #d48a80;
+  --blue: #9aa98a; --green: #5c7a52; --teal: #5e7482; --orange: #a26538; --red: #a8553f; --yellow: #bc9a52; --gray: #8d857b;
+  --bg: #181512; --card: #24201b; --fill: rgba(210,190,165,.08);
+  --text: #ede6dc; --muted: rgba(237,230,220,.55); --line: rgba(237,230,220,.10);
+  --bar: rgba(24,21,18,.82); --tint-soft: rgba(154,169,138,.14); --danger-soft: rgba(200,120,100,.14); --seg-on: #3d3832; --card-edge: rgba(255,255,255,.04);
+  --good: #9db88a; --ok: #d6a066; --bad: #d88a76;
   color-scheme: dark;
 }
 
