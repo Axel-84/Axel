@@ -6,27 +6,27 @@
    ========================================================== */
 :root {
   /* Matte accent + grade colours (names kept from iOS for simplicity) */
-  --blue: #6b4f3a;          /* matte brown: main accent, buttons, links, selected */
-  --green: #5f7040;         /* warm olive (grade 3) */
-  --teal: #806c30;          /* bronze / mustard (grade 2) */
-  --orange: #a85f34;        /* clay orange (grade 1) */
+  --blue: #2f4466;          /* matte navy: main accent, buttons, links, selected */
+  --green: #587350;         /* sage (grade 3) */
+  --teal: #4a6f80;          /* dusty steel (grade 2) */
+  --orange: #a5622f;        /* ochre clay (grade 1) */
   --red: #a3473a;           /* brick red (grade 0, delete) */
-  --yellow: #c29a52;        /* caramel gold */
-  --gray: #7d7266;          /* warm taupe grey */
+  --yellow: #c2a15a;        /* muted gold */
+  --gray: #736d62;          /* sand grey */
 
-  --bg: #efe7da;            /* oat milk page */
-  --card: #fffdf7;          /* milk-white cards */
-  --fill: rgba(120,90,60,.10);
-  --text: #2e221a;          /* espresso ink */
-  --muted: rgba(62,45,32,.64);
-  --line: rgba(80,58,40,.16);
-  --bar: rgba(239,231,218,.82);
-  --tint-soft: rgba(107,79,58,.12);
+  --bg: #ece4d4;            /* sand page */
+  --card: #fdf9f0;          /* cream cards */
+  --fill: rgba(110,95,70,.10);
+  --text: #1f2633;          /* navy ink */
+  --muted: rgba(35,42,58,.70);
+  --line: rgba(60,55,45,.16);
+  --bar: rgba(236,228,212,.82);
+  --tint-soft: rgba(47,68,102,.12);
   --danger-soft: rgba(163,71,58,.12);
-  --seg-on: #fffdf7;
-  --card-edge: rgba(80,58,40,.08);
+  --seg-on: #fdf9f0;
+  --card-edge: rgba(60,55,45,.08);
 
-  --good: #5a6b3b; --ok: #94602c; --bad: #9e4536;
+  --good: #4f6b48; --ok: #93602b; --bad: #9e4536;
   --g3: var(--green); --g2: var(--teal); --g1: var(--orange); --g0: var(--red);
 
   --radius: 12px;
@@ -37,20 +37,20 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --blue: #c9a27e; --green: #5f7040; --teal: #806c30; --orange: #a85f34; --red: #b85a46; --yellow: #c09a55; --gray: #8f8478;
-    --bg: #1a1410; --card: #261e18; --fill: rgba(220,195,165,.08);
-    --text: #f1e8dc; --muted: rgba(241,232,220,.56); --line: rgba(241,232,220,.10);
-    --bar: rgba(26,20,16,.82); --tint-soft: rgba(201,162,126,.15); --danger-soft: rgba(205,120,100,.15); --seg-on: #40342b; --card-edge: rgba(255,240,220,.05);
-    --good: #a9b98a; --ok: #d8a46a; --bad: #db8b78;
+    --blue: #9db0cf; --green: #587350; --teal: #4a6f80; --orange: #a5622f; --red: #b85a46; --yellow: #c4a560; --gray: #8a8e98;
+    --bg: #121722; --card: #1b2230; --fill: rgba(200,190,170,.08);
+    --text: #ede4d3; --muted: rgba(237,228,211,.56); --line: rgba(237,228,211,.10);
+    --bar: rgba(18,23,34,.82); --tint-soft: rgba(157,176,207,.15); --danger-soft: rgba(205,120,100,.15); --seg-on: #333c4d; --card-edge: rgba(220,230,255,.05);
+    --good: #a3bb98; --ok: #d8a46a; --bad: #db8b78;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --blue: #c9a27e; --green: #5f7040; --teal: #806c30; --orange: #a85f34; --red: #b85a46; --yellow: #c09a55; --gray: #8f8478;
-  --bg: #1a1410; --card: #261e18; --fill: rgba(220,195,165,.08);
-  --text: #f1e8dc; --muted: rgba(241,232,220,.56); --line: rgba(241,232,220,.10);
-  --bar: rgba(26,20,16,.82); --tint-soft: rgba(201,162,126,.15); --danger-soft: rgba(205,120,100,.15); --seg-on: #40342b; --card-edge: rgba(255,240,220,.05);
-  --good: #a9b98a; --ok: #d8a46a; --bad: #db8b78;
+  --blue: #9db0cf; --green: #587350; --teal: #4a6f80; --orange: #a5622f; --red: #b85a46; --yellow: #c4a560; --gray: #8a8e98;
+  --bg: #121722; --card: #1b2230; --fill: rgba(200,190,170,.08);
+  --text: #ede4d3; --muted: rgba(237,228,211,.56); --line: rgba(237,228,211,.10);
+  --bar: rgba(18,23,34,.82); --tint-soft: rgba(157,176,207,.15); --danger-soft: rgba(205,120,100,.15); --seg-on: #333c4d; --card-edge: rgba(220,230,255,.05);
+  --good: #a3bb98; --ok: #d8a46a; --bad: #db8b78;
   color-scheme: dark;
 }
 
