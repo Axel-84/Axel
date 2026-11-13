@@ -8,7 +8,8 @@
   /* Shared, non-colour settings */
   --g3: var(--green); --g2: var(--teal); --g1: var(--orange); --g0: var(--red);
   --radius: 12px;
-  --tabbar-h: 50px;
+  --tabbar-h: 62px;         /* height of the floating tab pill */
+  --tabbar-gap: 10px;       /* space between the pill and the bottom of the screen */
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, Roboto, sans-serif;
   --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, Roboto, sans-serif;
   color-scheme: light;
@@ -115,7 +116,7 @@ body {
   background: var(--bg); color: var(--text);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
-  padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 12px);
+  padding-bottom: calc(var(--tabbar-h) + var(--tabbar-gap) + env(safe-area-inset-bottom) + 20px);
 }
 body.no-tabs { padding-bottom: calc(env(safe-area-inset-bottom) + 12px); }
 body.no-tabs .tabbar { display: none; }
@@ -149,19 +150,31 @@ a { color: var(--blue); }
 main { max-width: 1100px; margin: 0 auto; padding: 12px 16px 24px; }
 
 /* ---------- Tab bar ---------- */
+/* Floating frosted pill that hovers above the bottom of the screen */
 .tabbar {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  height: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
-  padding-bottom: env(safe-area-inset-bottom);
+  position: fixed; z-index: 20;
+  left: 50%; transform: translateX(-50%);
+  bottom: calc(env(safe-area-inset-bottom) + var(--tabbar-gap));
+  width: min(420px, calc(100% - 32px));
+  height: var(--tabbar-h);
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;
+  padding: 6px;
+  border-radius: 999px;
   background: var(--bar);
-  -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
-  border-top: .5px solid var(--line);
+  -webkit-backdrop-filter: saturate(180%) blur(24px); backdrop-filter: saturate(180%) blur(24px);
+  border: .5px solid var(--line);
+  box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.08);
 }
-.tabbar a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 10px; font-weight: 500; letter-spacing: .1px; color: var(--gray); text-decoration: none; }
-.tabbar .ti { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.tabbar a {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  border-radius: 999px;
+  font-size: 10px; font-weight: 500; letter-spacing: .1px; color: var(--gray); text-decoration: none;
+  transition: background .2s, color .2s;
+}
+.tabbar .ti { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .tabbar a[data-tab="season"] .ti, .tabbar a[data-tab="settings"] .ti { fill: currentColor; stroke: none; }
-.tabbar a.active { color: var(--blue); }
+.tabbar a.active { color: var(--blue); background: var(--tint-soft); font-weight: 600; }
+.tabbar a:active { transform: scale(.94); }
 
 /* ---------- Type ---------- */
 h2 {
@@ -320,7 +333,7 @@ details summary { cursor: pointer; color: var(--blue); }
 
 /* ---------- Toast (iOS-style HUD) ---------- */
 #toast {
-  position: fixed; left: 50%; bottom: calc(var(--tabbar-h) + 20px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(10px) scale(.96);
+  position: fixed; left: 50%; bottom: calc(var(--tabbar-h) + var(--tabbar-gap) + 14px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(10px) scale(.96);
   background: var(--bar); color: var(--text);
   -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
   box-shadow: 0 6px 24px rgba(0,0,0,.10);
