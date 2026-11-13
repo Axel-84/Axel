@@ -416,3 +416,74 @@ body.no-tabs #toast { bottom: calc(24px + env(safe-area-inset-bottom)); }
 .palettes .tick { width: 20px; height: 20px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--gray); display: grid; place-items: center; flex: none; }
 .palettes button.on .tick { background: var(--blue); box-shadow: none; }
 .palettes button.on .tick::after { content: ""; width: 5px; height: 9px; border: solid var(--card); border-width: 0 2px 2px 0; transform: translateY(-1px) rotate(45deg); }
+
+/* ---------- Clips (video playlists) ---------- */
+.flabel { font-size: 13px; color: var(--muted); text-transform: uppercase; margin: 0 0 6px 4px; }
+.gfilter { display: flex; gap: 8px; flex-wrap: wrap; }
+.gfilter .gchip {
+  border: 0; min-width: 54px; min-height: 36px; padding: 0 12px; border-radius: 999px;
+  font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+  transition: opacity .15s, transform .3s cubic-bezier(.34, 1.56, .64, 1);
+}
+.gfilter .gchip.off { opacity: .28; }
+.gfilter .gchip:active { transform: scale(.92); }
+.clip-now { margin-top: 12px; font-size: 15px; }
+.clip-now .gchip { margin-left: 4px; }
+.clips-list { max-height: 440px; overflow: auto; margin-top: 8px; }
+.clip-row {
+  display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center;
+  width: calc(100% + 16px); margin: 0 -8px; min-height: 48px; padding: 6px 8px;
+  border: 0; border-top: .5px solid var(--line); border-radius: 10px; background: none;
+  color: var(--text); font: inherit; font-size: 15px; text-align: left; cursor: pointer;
+}
+.clip-row:first-child { border-top-color: transparent; }
+.clip-row.on { background: var(--tint-soft); border-top-color: transparent; }
+.clip-row.on + .clip-row { border-top-color: transparent; }
+.clip-row .ctime { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; min-width: 64px; }
+
+/* ---------- Team targets ---------- */
+.target-row {
+  display: grid; grid-template-columns: 1fr auto auto 24px; gap: 12px; align-items: center;
+  min-height: 44px; border-top: .5px solid var(--line); font-size: 15px;
+}
+.row + .target-row { border-top: 0; }
+.tmark { font-weight: 700; text-align: center; color: var(--muted); }
+.tmark.yes { color: var(--good); }
+.tmark.no { color: var(--bad); }
+
+/* ---------- Player profile ---------- */
+.player-head { display: flex; align-items: center; gap: 14px; }
+.pnum {
+  width: 56px; height: 56px; border-radius: 50%; flex: none; display: grid; place-items: center;
+  background: var(--tint-soft); color: var(--blue);
+  font-family: var(--font-display); font-size: 24px; font-weight: 700;
+}
+.pname { font-size: 20px; font-weight: 600; }
+.trend-row {
+  display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 4px 12px;
+  min-height: 44px; padding: 10px 0; border-top: .5px solid var(--line);
+}
+.trend-row:first-child { border-top: 0; }
+.trend-row .q-none { font-weight: 700; }
+.link-row { color: var(--text); text-decoration: none; }
+.chev { color: var(--gray); font-size: 24px; line-height: 1; }
+td a { text-decoration: none; font-weight: 600; }
+
+/* ---------- Report preview sheet ---------- */
+.sheet {
+  position: fixed; inset: 0; z-index: 60; display: flex; align-items: flex-end; justify-content: center;
+  padding: calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));
+  background: rgba(0,0,0,.4); animation: sheet-fade .2s ease-out;
+}
+.sheet-card {
+  width: 100%; max-width: 460px; max-height: 100%; display: flex; flex-direction: column; gap: 12px;
+  background: var(--card); border-radius: 18px; padding: 16px;
+  animation: sheet-up .35s cubic-bezier(.2, .9, .3, 1);
+}
+.sheet-card img {
+  width: 100%; min-height: 0; max-height: 62vh; flex: 1 1 auto; object-fit: contain;
+  border-radius: 10px; background: var(--bg); box-shadow: 0 0 0 .5px var(--card-edge);
+}
+@keyframes sheet-fade { from { opacity: 0; } }
+@keyframes sheet-up { from { transform: translateY(40px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .sheet, .sheet-card { animation: none; } }

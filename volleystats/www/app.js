@@ -106,7 +106,11 @@ function setChrome({ title, back, tab, tabs = true, right = '', large = false })
   $('#largeTitle').hidden = !large;
   const b = $('#backBtn');
   b.style.visibility = back ? 'visible' : 'hidden';
-  b.onclick = () => { location.hash = back; };
+  b.onclick = () => {
+    // '@back:#/fallback' = go back to wherever the user came from (screens reachable from several places)
+    if (String(back).startsWith('@back:')) { if (navCount > 1) history.back(); else location.hash = back.slice(6); }
+    else location.hash = back;
+  };
   $('#topRight').innerHTML = right;
   document.body.classList.toggle('no-tabs', !tabs);
   updateTabbar(tab);
@@ -134,12 +138,17 @@ function updateTabbar(tab) {
   if (!nav.classList.contains('ready')) requestAnimationFrame(() => requestAnimationFrame(() => nav.classList.add('ready')));
 }
 
+let navCount = 0;
 function route() {
   if (cleanup) { cleanup(); cleanup = null; }
+  $$('.sheet').forEach(s => s.remove());
+  navCount++;
   const parts = (location.hash.replace(/^#\/?/, '') || 'matches').split('/');
-  const [p0, p1, p2] = parts;
+  const [p0, p1, p2, p3] = parts;
   window.scrollTo(0, 0);
   try {
+    if (p0 === 'match' && p1 && p2 === 'clips') return viewClips(p1, p3);
+    if (p0 === 'player' && p1) return viewPlayer(p1);
     if (p0 === 'matches') return viewMatches();
     if (p0 === 'teams') return viewTeams();
     if (p0 === 'team' && p1) return viewTeam(p1);
@@ -177,10 +186,12 @@ function viewMatches() {
     ${ms.length ? `<div class="card">${ms.map(m => {
       const t = team(m.teamId);
       const nR = m.events.filter(e => e.type === 'receive').length, nS = m.events.filter(e => e.type === 'serve').length;
+      const tg = targetsSummary(evalTargets(t, m.events));
+      const tgText = tg.total ? ` · <span class="${tg.met === tg.total ? 'q-good' : 'q-bad'}">targets ${tg.met}/${tg.total}${tg.met === tg.total ? ' ✓' : ''}</span>` : '';
       return `<div class="list-item">
         <div class="grow">
           <a class="title" href="#/match/${m.id}/tag">${esc(t ? t.name : 'Team')} vs ${esc(m.opponent || 'Opponent')}</a>
-          <div class="small muted">${fmtDate(m.date)}${m.competition ? ' · ' + esc(m.competition) : ''} · ${nR} receives · ${nS} serves</div>
+          <div class="small muted">${fmtDate(m.date)}${m.competition ? ' · ' + esc(m.competition) : ''} · ${nR} receives · ${nS} serves${tgText}</div>
         </div>
         <a class="btn sm" href="#/match/${m.id}/tag">Tag</a>
         <a class="btn sm" href="#/match/${m.id}/stats">Stats</a>
@@ -247,6 +258,19 @@ function viewTeam(id) {
       </div>
       <details class="card small"><summary><b>Position codes</b></summary>
         <p>${POSITIONS.map(p => `<b>${p.code}</b> ${p.name}`).join(' · ')}</p></details>
+      ${players.length ? `<h2>Player stats</h2>
+      <div class="card">${players.map(p => `
+        <a class="list-item link-row" href="#/player/${p.id}">
+          <span class="grow">${esc(playerName(p))} <span class="pill">${esc(p.pos)}</span></span><span class="chev">&#8250;</span>
+        </a>`).join('')}</div>` : ''}
+      <h2>Team targets</h2>
+      <div class="card">
+        <p class="small muted" style="margin-top:0">Set the goals you want each match to hit. Leave a box empty for no target. Matches then show &#10003; or &#10007; for every target.</p>
+        <div class="grid2">${TARGETS.map(d => `
+          <label class="field"><span>${d.label} ${d.dir === 'min' ? 'at least' : 'at most'}${d.kind === 'pct' ? ' (%)' : ''}</span>
+            <input data-target="${d.key}" inputmode="decimal" placeholder="e.g. ${d.ph}" value="${esc(t.targets?.[d.key] ?? '')}"></label>`).join('')}
+        </div>
+      </div>
       <button class="btn danger" id="delTeam">Delete team</button>`;
 
     $('#tname').onchange = e => { t.name = e.target.value.trim() || t.name; save(); setChrome({ title: t.name, back: '#/teams', tab: 'teams' }); };
@@ -257,6 +281,13 @@ function viewTeam(id) {
         if (!confirmDo(`Remove ${playerName(p)}? Their tagged stats stay in old matches.`)) return;
         t.players = t.players.filter(x => x !== p); save(); render();
       };
+    });
+    $$('[data-target]').forEach(inp => inp.onchange = () => {
+      const v = parseFloat(inp.value.replace(',', '.'));
+      t.targets ??= {};
+      if (isNaN(v)) { delete t.targets[inp.dataset.target]; inp.value = ''; }
+      else { t.targets[inp.dataset.target] = v; inp.value = v; }
+      save(); toast(isNaN(v) ? 'Target removed' : 'Target saved');
     });
     $('#addP').onsubmit = e => {
       e.preventDefault();
@@ -377,7 +408,7 @@ function viewTag(id) {
   const t = team(m.teamId) || { name: 'Team', players: [] };
   setChrome({
     title: `vs ${m.opponent || 'Opponent'}`, back: '#/matches', tab: 'matches', tabs: false,
-    right: `<a class="nav-action text" href="#/match/${m.id}/stats">Stats</a>`
+    right: `<a class="nav-action text" href="#/match/${m.id}/clips">Clips</a><a class="nav-action text" href="#/match/${m.id}/stats">Stats</a>`
   });
   let curSet = m.lastSet || 1;
   let selected = null;
@@ -616,22 +647,17 @@ function statsHTML(events, players) {
   const rIds = ids.filter(id => S.byPlayer[id].receive.n), sIds = ids.filter(id => S.byPlayer[id].serve.n);
   const R = S.total.receive, V = S.total.serve;
   const posOrder = POSITIONS.map(p => p.code).filter(c => S.byPos[c]);
+  // player name links to their profile page
+  const nameCell = id => pl(id) ? `<a href="#/player/${id}">${esc(playerName(pl(id)))}</a>` : esc(playerName(null));
 
   return `
-    <div class="tiles">
-      <div class="tile"><div class="k">Pass average</div><div class="v ${recQuality(avg(R.sum, R.n))}">${f2(avg(R.sum, R.n))}</div><div class="s">${R.n} serve receives</div></div>
-      <div class="tile"><div class="k">Perfect passes</div><div class="v">${pct(R.c[3], R.n)}</div><div class="s">${R.c[3]} graded 3</div></div>
-      <div class="tile"><div class="k">Aced</div><div class="v">${pct(R.c[0], R.n)}</div><div class="s">${R.c[0]} graded 0</div></div>
-      <div class="tile"><div class="k">Serve average</div><div class="v ${srvQuality(avg(V.sum, V.n))}">${f2(avg(V.sum, V.n))}</div><div class="s">${V.n} serves</div></div>
-      <div class="tile"><div class="k">Aces</div><div class="v">${V.c[3]}</div><div class="s">${pct(V.c[3], V.n)} of serves</div></div>
-      <div class="tile"><div class="k">Serve errors</div><div class="v">${V.c[0]}</div><div class="s">${pct(V.c[0], V.n)} of serves</div></div>
-    </div>
+    ${tilesHTML(events)}
 
     <div class="card">
       <h3 style="margin-top:0">Serve receive (0–3)</h3>
       ${rIds.length ? `<div class="table-wrap"><table>
         <thead>${RECV_HEAD}</thead>
-        <tbody>${rIds.map(id => `<tr>${receiveRow(esc(playerName(pl(id))), esc(mainPos(S.byPlayer[id].pos)), S.byPlayer[id].receive)}</tr>`).join('')}
+        <tbody>${rIds.map(id => `<tr>${receiveRow(nameCell(id), esc(mainPos(S.byPlayer[id].pos)), S.byPlayer[id].receive)}</tr>`).join('')}
         <tr class="total">${receiveRow('Team', '', R)}</tr></tbody></table></div>
         ${legendHTML(['3 Perfect', '2 Good', '1 Poor', '0 Aced/error'])}` : '<p class="muted small">No serve receives tagged.</p>'}
     </div>
@@ -640,7 +666,7 @@ function statsHTML(events, players) {
       <h3 style="margin-top:0">Serving</h3>
       ${sIds.length ? `<div class="table-wrap"><table>
         <thead>${SERV_HEAD}</thead>
-        <tbody>${sIds.map(id => `<tr>${serveRow(esc(playerName(pl(id))), esc(mainPos(S.byPlayer[id].pos)), S.byPlayer[id].serve)}</tr>`).join('')}
+        <tbody>${sIds.map(id => `<tr>${serveRow(nameCell(id), esc(mainPos(S.byPlayer[id].pos)), S.byPlayer[id].serve)}</tr>`).join('')}
         <tr class="total">${serveRow('Team', '', V)}</tr></tbody></table></div>
         ${legendHTML(['Ace', '2 Tough', '1 Easy', 'Error'])}` : '<p class="muted small">No serves tagged.</p>'}
     </div>
@@ -673,15 +699,24 @@ function viewMatchStats(id) {
   setChrome({ title: `Stats vs ${m.opponent || 'Opponent'}`, back: '#/match/' + id + '/tag', tab: 'matches', tabs: false });
   const render = () => {
     const evs = matchStatsSet ? m.events.filter(e => e.set === matchStatsSet) : m.events;
+    const sub = `${fmtDate(m.date)}${m.competition ? ' · ' + m.competition : ''}${matchStatsSet ? ' · Set ' + matchStatsSet : ''}`;
     app.innerHTML = `
-      <div class="row spread" style="margin-bottom:10px">
-        <div class="small muted">${esc(t.name)} vs ${esc(m.opponent)} · ${fmtDate(m.date)}${m.competition ? ' · ' + esc(m.competition) : ''}</div>
+      <div class="small muted" style="margin:0 4px 10px">${esc(t.name)} vs ${esc(m.opponent)} · ${esc(sub)}</div>
+      <div class="row" style="margin-bottom:14px">
+        <a class="btn sm" href="#/match/${m.id}/clips">&#9654; Watch clips</a>
+        <button class="btn sm" id="share" ${evs.length ? '' : 'disabled'}>Share report</button>
         <button class="btn sm" id="csv">Export CSV</button>
       </div>
       <div id="segWrap">${setsSeg(m.events, matchStatsSet, '')}</div>
+      ${evs.length ? targetsHTML(team(m.teamId), evs) : ''}
       ${statsHTML(evs, t.players)}`;
     $$('#segWrap [data-href]').forEach(b => b.onclick = () => { matchStatsSet = b.dataset.href ? +b.dataset.href.slice(1) : null; render(); });
     $('#csv').onclick = () => exportCSV(`${t.name} vs ${m.opponent} ${m.date}${matchStatsSet ? ' set ' + matchStatsSet : ''}`, evs, t.players);
+    $('#share').onclick = () => showReport(`${t.name} vs ${m.opponent} ${m.date}`, drawReport({
+      title: `${t.name} vs ${m.opponent || 'Opponent'}`, subtitle: sub,
+      tiles: tileData(evs), targets: evalTargets(team(m.teamId), evs),
+      tables: [{ title: 'Players', head: PLAYER_REPORT_HEAD, rows: playerReportRows(evs, t.players) }],
+    }));
   };
   matchStatsSet = null;
   render();
@@ -693,29 +728,492 @@ function viewSeason(teamId) {
   const t = team(teamId) || db.teams[0];
   const ms = db.matches.filter(m => m.teamId === t.id).sort((a, b) => (a.date || '').localeCompare(b.date || ''));
   const evs = ms.flatMap(m => m.events);
+  const sub = `${ms.length} match${ms.length === 1 ? '' : 'es'}${ms.length ? ' · ' + fmtDate(ms[0].date) + (ms.length > 1 ? ' – ' + fmtDate(ms[ms.length - 1].date) : '') : ''}`;
   app.innerHTML = `
-    <div class="card row">
-      <label class="field grow"><span>Team</span>
+    <div class="card stack">
+      <label class="field"><span>Team</span>
         <select id="teamSel">${db.teams.map(x => `<option value="${x.id}" ${x.id === t.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></label>
-      <button class="btn sm" id="csv" style="align-self:flex-end">Export CSV</button>
+      <div class="row">
+        <button class="btn sm" id="share" ${evs.length ? '' : 'disabled'}>Share report</button>
+        <button class="btn sm" id="csv">Export CSV</button>
+      </div>
     </div>
     <p class="small muted">${ms.length} match${ms.length === 1 ? '' : 'es'} · all tagged actions combined</p>
+    ${evs.length ? targetsHTML(t, evs, 'Season targets') : ''}
     ${statsHTML(evs, t.players)}
-    ${ms.length > 1 ? trendHTML(ms) : ''}`;
+    ${ms.length > 1 ? trendHTML(ms, t) : ''}`;
   $('#teamSel').onchange = e => { location.hash = '#/season/' + e.target.value; };
   $('#csv').onclick = () => exportCSV(`${t.name} season`, evs, t.players);
+  $('#share').onclick = () => showReport(`${t.name} season`, drawReport({
+    title: `${t.name} · Season`, subtitle: sub,
+    tiles: tileData(evs), targets: evalTargets(t, evs),
+    tables: [
+      { title: 'Players', head: PLAYER_REPORT_HEAD, rows: playerReportRows(evs, t.players) },
+      ...(ms.length > 1 ? [{ title: 'Match by match', head: MATCH_REPORT_HEAD, rows: ms.map(m => matchReportRow(m, m.events)) }] : []),
+    ],
+  }));
 }
 
-function trendHTML(ms) {
+function trendHTML(ms, t) {
+  const hasTargets = TARGETS.some(d => t && t.targets && t.targets[d.key] != null);
   return `<div class="card"><h3 style="margin-top:0">Match by match</h3>
     <div class="table-wrap"><table>
-      <thead><tr><th>Match</th><th>Date</th><th>Receives</th><th>Pass avg</th><th>Aced %</th><th>Serves</th><th>Serve avg</th><th>Aces</th><th>Errors</th></tr></thead>
+      <thead><tr><th>Match</th><th>Date</th>${hasTargets ? '<th>Targets</th>' : ''}<th>Receives</th><th>Pass avg</th><th>Aced %</th><th>Serves</th><th>Serve avg</th><th>Aces</th><th>Errors</th></tr></thead>
       <tbody>${ms.map(m => {
         const S = computeStats(m.events), r = S.total.receive, s = S.total.serve, ra = avg(r.sum, r.n), sa = avg(s.sum, s.n);
-        return `<tr><td><a href="#/match/${m.id}/stats">vs ${esc(m.opponent)}</a></td><td>${fmtDate(m.date)}</td>
+        const tg = targetsSummary(evalTargets(t, m.events));
+        const tgCell = hasTargets ? `<td class="${tg.total ? (tg.met === tg.total ? 'q-good' : 'q-bad') : ''}">${tg.total ? `${tg.met}/${tg.total}${tg.met === tg.total ? ' ✓' : ''}` : '–'}</td>` : '';
+        return `<tr><td><a href="#/match/${m.id}/stats">vs ${esc(m.opponent)}</a></td><td>${fmtDate(m.date)}</td>${tgCell}
           <td>${r.n}</td><td class="${recQuality(ra)}">${f2(ra)}</td><td>${pct(r.c[0], r.n)}</td>
           <td>${s.n}</td><td class="${srvQuality(sa)}">${f2(sa)}</td><td>${s.c[3]}</td><td>${s.c[0]}</td></tr>`;
       }).join('')}</tbody></table></div></div>`;
+}
+
+/* ============================================================
+   SHARED STAT PIECES (tiles, targets, trends)
+   ============================================================ */
+const qName = cls => cls === 'q-good' ? 'good' : cls === 'q-ok' ? 'ok' : cls === 'q-bad' ? 'bad' : '';
+const sharePct = (L, g) => L.n ? L.c[g] / L.n * 100 : null;
+
+// The six summary numbers, used on screen and in the shared report image.
+function tileData(events) {
+  const S = computeStats(events), R = S.total.receive, V = S.total.serve;
+  const ra = avg(R.sum, R.n), sa = avg(V.sum, V.n);
+  return [
+    { k: 'Pass average', v: f2(ra), s: `${R.n} serve receives`, q: qName(recQuality(ra)) },
+    { k: 'Perfect passes', v: pct(R.c[3], R.n), s: `${R.c[3]} graded 3` },
+    { k: 'Aced', v: pct(R.c[0], R.n), s: `${R.c[0]} graded 0` },
+    { k: 'Serve average', v: f2(sa), s: `${V.n} serves`, q: qName(srvQuality(sa)) },
+    { k: 'Aces', v: String(V.c[3]), s: `${pct(V.c[3], V.n)} of serves` },
+    { k: 'Serve errors', v: String(V.c[0]), s: `${pct(V.c[0], V.n)} of serves` },
+  ];
+}
+function tilesHTML(events) {
+  return `<div class="tiles">${tileData(events).map(x => `
+    <div class="tile"><div class="k">${x.k}</div><div class="v ${x.q ? 'q-' + x.q : ''}">${x.v}</div><div class="s">${x.s}</div></div>`).join('')}</div>`;
+}
+
+// Team targets: saved per team as team.targets = { passAvg: 2.2, serveErrPct: 10, ... } (all optional).
+const TARGETS = [
+  { key: 'passAvg', label: 'Pass average', dir: 'min', kind: 'avg', ph: '2.20', calc: S => avg(S.total.receive.sum, S.total.receive.n) },
+  { key: 'perfectPct', label: 'Perfect passes', dir: 'min', kind: 'pct', ph: '40', calc: S => sharePct(S.total.receive, 3) },
+  { key: 'acedPct', label: 'Aced', dir: 'max', kind: 'pct', ph: '10', calc: S => sharePct(S.total.receive, 0) },
+  { key: 'serveAvg', label: 'Serve average', dir: 'min', kind: 'avg', ph: '1.60', calc: S => avg(S.total.serve.sum, S.total.serve.n) },
+  { key: 'acePct', label: 'Aces', dir: 'min', kind: 'pct', ph: '8', calc: S => sharePct(S.total.serve, 3) },
+  { key: 'serveErrPct', label: 'Serve errors', dir: 'max', kind: 'pct', ph: '10', calc: S => sharePct(S.total.serve, 0) },
+];
+const fmtTarget = (d, v) => v == null ? '–' : d.kind === 'avg' ? (+v).toFixed(2) : Math.round(v) + '%';
+function evalTargets(t, events) {
+  const goals = (t && t.targets) || {};
+  const set = TARGETS.filter(d => goals[d.key] != null);
+  if (!set.length) return [];
+  const S = computeStats(events);
+  return set.map(d => {
+    const raw = d.calc(S), goal = goals[d.key];
+    // compare the numbers as shown on screen, so "10%" vs a 10% goal never looks wrong
+    const v = raw == null ? null : d.kind === 'avg' ? Math.round(raw * 100) / 100 : Math.round(raw);
+    return { d, goal, v, ok: v == null ? null : d.dir === 'min' ? v >= goal : v <= goal };
+  });
+}
+function targetsSummary(rows) {
+  const judged = rows.filter(r => r.ok != null);
+  return { met: judged.filter(r => r.ok).length, total: judged.length };
+}
+function targetsHTML(t, events, title = 'Targets') {
+  const rows = evalTargets(t, events);
+  if (!rows.length) return t ? `<div class="card small muted">No team targets yet. <a href="#/team/${t.id}">Set targets</a> to get a &#10003; or &#10007; for every match.</div>` : '';
+  const { met, total } = targetsSummary(rows);
+  return `<div class="card">
+    <div class="row spread" style="margin-bottom:4px"><h3 style="margin:0">${title}</h3>
+      <span class="pill">${met} of ${total} met</span></div>
+    ${rows.map(r => `<div class="target-row">
+      <span>${esc(r.d.label)}</span>
+      <span class="muted small">goal ${r.d.dir === 'min' ? '&ge;' : '&le;'} ${fmtTarget(r.d, r.goal)}</span>
+      <span class="num">${fmtTarget(r.d, r.v)}</span>
+      <span class="tmark ${r.ok == null ? '' : r.ok ? 'yes' : 'no'}">${r.ok == null ? '–' : r.ok ? '&#10003;' : '&#10007;'}</span>
+    </div>`).join('')}
+  </div>`;
+}
+
+// Is a player's passing/serving going up or down? Recent matches vs the earlier ones.
+function trendFor(ms, pid, type) {
+  const lines = ms.map(m => { const L = emptyLine(); m.events.forEach(e => { if (e.playerId === pid && e.type === type) addTo(L, e.grade); }); return L; }).filter(L => L.n);
+  if (lines.length < 2) return null;
+  const k = Math.min(3, Math.floor(lines.length / 2));
+  const pool = arr => arr.reduce((a, L) => ({ sum: a.sum + L.sum, n: a.n + L.n }), { sum: 0, n: 0 });
+  const r = pool(lines.slice(-k)), b = pool(lines.slice(0, -k));
+  const recent = r.sum / r.n, before = b.sum / b.n, d = recent - before;
+  const dir = Math.abs(d) < 0.1 ? 0 : d > 0 ? 1 : -1;
+  return {
+    recent, before, k, dir,
+    word: dir > 0 ? '↑ Going up' : dir < 0 ? '↓ Going down' : '→ About the same',
+    q: dir > 0 ? 'good' : dir < 0 ? 'bad' : '',
+    detail: `last ${k === 1 ? 'match' : k + ' matches'} ${recent.toFixed(2)} · before ${before.toFixed(2)}`,
+  };
+}
+
+/* ============================================================
+   PLAYER PROFILE
+   ============================================================ */
+function viewPlayer(pid) {
+  const t = db.teams.find(x => x.players.some(p => p.id === pid));
+  if (!t) { location.hash = '#/teams'; return; }
+  const p = t.players.find(x => x.id === pid);
+  setChrome({ title: p.name, back: '@back:#/team/' + t.id, tab: 'season' });
+  const ms = db.matches.filter(m => m.teamId === t.id && m.events.some(e => e.playerId === pid))
+    .sort((a, b) => (a.date || '').localeCompare(b.date || '') || a.created - b.created);
+  const mine = m => m.events.filter(e => e.playerId === pid);
+  const evs = ms.flatMap(mine);
+  const trends = [['Passing', trendFor(ms, pid, 'receive')], ['Serving', trendFor(ms, pid, 'serve')]];
+
+  app.innerHTML = `
+    <div class="card player-head">
+      <div class="pnum">${esc(p.number || '–')}</div>
+      <div class="grow"><div class="pname">${esc(p.name)}</div>
+        <div class="small muted">${esc(POS_NAME[p.pos] || p.pos)} · ${esc(t.name)} · ${ms.length} match${ms.length === 1 ? '' : 'es'}</div></div>
+      <button class="btn sm" id="share" ${evs.length ? '' : 'disabled'}>Share</button>
+    </div>
+    ${!evs.length ? `<div class="card empty"><p>No tagged actions for ${esc(p.name)} yet. Tag a match and their stats will show up here.</p></div>` : `
+    <h2>Trend</h2>
+    <div class="card">${trends.map(([label, tr]) => `
+      <div class="trend-row"><b>${label}</b>
+        ${tr ? `<span><span class="q-${tr.q || 'none'}">${tr.word}</span> <span class="small muted">${tr.detail}</span></span>`
+             : '<span class="small muted">Needs 2 matches to show a trend</span>'}
+      </div>`).join('')}
+    </div>
+    <h2>Season</h2>
+    ${tilesHTML(evs)}
+    <h2>Match by match</h2>
+    <div class="card"><div class="table-wrap"><table>
+      <thead><tr><th>Match</th><th>Receives</th><th>Pass avg</th><th>Serves</th><th>Serve avg</th><th>Aces</th><th>Errors</th><th></th></tr></thead>
+      <tbody>${ms.map(m => {
+        const S = computeStats(mine(m)), r = S.total.receive, s = S.total.serve, ra = avg(r.sum, r.n), sa = avg(s.sum, s.n);
+        return `<tr><td><a href="#/match/${m.id}/stats">vs ${esc(m.opponent)}</a> <span class="small muted">${fmtDate(m.date)}</span></td>
+          <td>${r.n}</td><td class="${recQuality(ra)}">${f2(ra)}</td><td>${s.n}</td><td class="${srvQuality(sa)}">${f2(sa)}</td><td>${s.c[3]}</td><td>${s.c[0]}</td>
+          <td><a href="#/match/${m.id}/clips/${pid}">Clips</a></td></tr>`;
+      }).join('')}</tbody></table></div></div>`}`;
+
+  if (!evs.length) return;
+  $('#share').onclick = () => showReport(`${p.name} report`, drawReport({
+    title: playerName(p), subtitle: `${POS_NAME[p.pos] || p.pos} · ${t.name} · ${ms.length} match${ms.length === 1 ? '' : 'es'}`,
+    tiles: tileData(evs),
+    notes: trends.filter(([, tr]) => tr).map(([label, tr]) => ({ label, text: tr.word, q: tr.q, detail: tr.detail })),
+    tables: [{ title: 'Match by match', head: MATCH_REPORT_HEAD, rows: ms.map(m => matchReportRow(m, mine(m))) }],
+  }));
+}
+
+/* ============================================================
+   CLIPS: play tagged moments back to back
+   ============================================================ */
+const CLIP_LEN = { short: [3, 2], normal: [5, 3], long: [8, 4] }; // seconds before / after the tag
+const clipFilters = {}; // remembered per match while the app is open
+
+function viewClips(id, presetPid) {
+  const m = match(id); if (!m) { location.hash = '#/matches'; return; }
+  const t = team(m.teamId) || { name: 'Team', players: [] };
+  setChrome({ title: `Clips vs ${m.opponent || 'Opponent'}`, back: '@back:#/match/' + id + '/tag', tab: 'matches', tabs: false });
+  const pl = pid => t.players.find(x => x.id === pid);
+  const timed = m.events.filter(e => e.t != null);
+  const pids = [...new Set(timed.map(e => e.playerId))].sort((a, b) => (+pl(a)?.number || 999) - (+pl(b)?.number || 999));
+  const f = clipFilters[id] ??= { player: 'all', type: 'all', grades: [0, 1, 2, 3], set: 'all', len: 'normal' };
+  if (presetPid) f.player = presetPid;
+  const gradeLabel = g => f.type === 'serve' ? SERVE_GRADES.find(x => x.g === g).label : String(g);
+  const evLabel = e => (e.type === 'serve' ? SERVE_GRADES : RECEIVE_GRADES).find(x => x.g === e.grade)?.label ?? e.grade;
+
+  let video = null, queue = [], qi = -1, auto = false;
+
+  app.innerHTML = `
+    <div class="tag-layout">
+      <div>
+        <div id="cvideo"></div>
+        <div class="card clip-now" id="cnow"></div>
+      </div>
+      <div class="tag-side">
+        <div class="card stack" id="cfilters"></div>
+        <div class="card"><div class="row spread"><h3 style="margin:0">Clips <span class="pill" id="ccount"></span></h3></div>
+          <div class="clips-list" id="clist"></div></div>
+      </div>
+    </div>`;
+
+  /* --- video --- */
+  function renderVideo() {
+    const url = videoUrls[m.id], box = $('#cvideo');
+    if (!url) {
+      box.innerHTML = `
+        <label class="video-pick card" style="display:block;cursor:pointer">
+          <div style="font-size:32px">&#127909;</div>
+          <b>Load match video</b>
+          <div class="small muted">${m.videoName ? `Pick <b>${esc(m.videoName)}</b> again to watch the clips.` : 'Pick the video you tagged this match from.'} The video stays on your phone.</div>
+          <input type="file" accept="video/*" id="vfile" hidden>
+        </label>`;
+      $('#vfile').onchange = e => {
+        const file = e.target.files[0]; if (!file) return;
+        videoUrls[m.id] = URL.createObjectURL(file);
+        m.videoName = file.name; save();
+        renderVideo(); renderNow();
+      };
+      video = null;
+      return;
+    }
+    box.innerHTML = `
+      <div class="video-wrap">
+        <video id="cvid" src="${url}" playsinline preload="metadata"></video>
+        <div class="vctrl">
+          <button class="btn" id="cprev" aria-label="Previous clip">&#8249; Prev</button>
+          <button class="btn" id="cplay">&#9654; Play all</button>
+          <button class="btn" id="cnext" aria-label="Next clip">Next &#8250;</button>
+          <button class="btn" id="cspd">1x</button>
+          <span class="time" id="ctime">0:00</span>
+        </div>
+      </div>`;
+    video = $('#cvid');
+    const upd = () => { $('#cplay').innerHTML = !video.paused ? '&#10074;&#10074; Pause' : auto ? '&#9654; Resume' : '&#9654; Play all'; };
+    video.addEventListener('play', upd); video.addEventListener('pause', upd);
+    video.addEventListener('timeupdate', () => {
+      $('#ctime').textContent = fmtTime(video.currentTime) + ' / ' + fmtTime(video.duration);
+      if (!auto || qi < 0 || !queue[qi]) return;
+      if (video.currentTime >= queue[qi].t + CLIP_LEN[f.len][1]) {
+        if (qi < queue.length - 1) playClip(qi + 1);
+        else { auto = false; video.pause(); toast('End of playlist'); renderNow(); upd(); }
+      }
+    });
+    video.addEventListener('click', () => video.paused ? video.play() : video.pause());
+    $('#cplay').onclick = () => {
+      if (!video.paused) video.pause();
+      else if (auto && qi >= 0) video.play();
+      else playClip(qi >= 0 ? qi : 0);
+    };
+    $('#cprev').onclick = () => playClip(qi > 0 ? qi - 1 : 0);
+    $('#cnext').onclick = () => playClip(qi < queue.length - 1 ? qi + 1 : qi);
+    const speeds = [1, 1.5, 2, 0.5];
+    $('#cspd').onclick = e => { const i = (speeds.indexOf(video.playbackRate) + 1) % speeds.length; video.playbackRate = speeds[i]; e.target.textContent = speeds[i] + 'x'; };
+  }
+
+  function playClip(i) {
+    if (!video) { toast('Load the match video first'); return; }
+    if (!queue.length) { toast('No clips match these filters'); return; }
+    qi = Math.max(0, Math.min(i, queue.length - 1));
+    auto = true;
+    video.currentTime = Math.max(0, queue[qi].t - CLIP_LEN[f.len][0]);
+    video.play();
+    renderNow(); markRow();
+  }
+
+  /* --- now playing --- */
+  function renderNow() {
+    const el = $('#cnow');
+    if (!timed.length) { el.innerHTML = '<span class="small muted">No tags in this match have a video time yet. Tags only get a time when the video is loaded while you tag.</span>'; return; }
+    if (qi < 0 || !queue[qi]) {
+      el.innerHTML = `<span class="small muted">${queue.length ? `Tap <b>Play all</b> to watch ${queue.length} clip${queue.length === 1 ? '' : 's'} back to back, or tap any clip below.` : 'No clips match these filters.'}</span>`;
+      return;
+    }
+    const e = queue[qi];
+    el.innerHTML = `<div class="row spread"><span><b>Clip ${qi + 1} of ${queue.length}</b> · ${esc(playerName(pl(e.playerId)))}</span>
+      <span>${TYPE_LABEL[e.type]} <span class="gchip g${e.grade}">${esc(evLabel(e))}</span></span></div>`;
+  }
+
+  /* --- filters --- */
+  function renderFilters() {
+    const sets = [...new Set(timed.map(e => e.set))].sort();
+    $('#cfilters').innerHTML = `
+      <label class="field"><span>Player</span>
+        <select id="fPlayer"><option value="all">All players</option>
+          ${pids.map(pid => `<option value="${pid}" ${f.player === pid ? 'selected' : ''}>${esc(playerName(pl(pid)))}</option>`).join('')}</select></label>
+      <div><div class="flabel">Skill</div>
+        <div class="seg" id="fType">${[['all', 'All'], ['receive', 'Receive'], ['serve', 'Serve']].map(([v, l]) => `<button data-v="${v}" class="${f.type === v ? 'on' : ''}">${l}</button>`).join('')}</div></div>
+      <div><div class="flabel">Grades</div>
+        <div class="gfilter" id="fGrades">${[3, 2, 1, 0].map(g => `<button class="gchip g${g} ${f.grades.includes(g) ? '' : 'off'}" data-g="${g}" aria-pressed="${f.grades.includes(g)}">${gradeLabel(g)}</button>`).join('')}</div></div>
+      <div class="row" style="align-items:flex-end">
+        <label class="field grow"><span>Set</span>
+          <select id="fSet"><option value="all">All sets</option>${sets.map(s => `<option value="${s}" ${String(f.set) === String(s) ? 'selected' : ''}>Set ${s}</option>`).join('')}</select></label>
+        <div><div class="flabel">Clip length</div>
+          <div class="seg" id="fLen">${[['short', 'Short'], ['normal', 'Normal'], ['long', 'Long']].map(([v, l]) => `<button data-v="${v}" class="${f.len === v ? 'on' : ''}">${l}</button>`).join('')}</div></div>
+      </div>`;
+    $('#fPlayer').onchange = e => { f.player = e.target.value; refresh(); };
+    $('#fSet').onchange = e => { f.set = e.target.value; refresh(); };
+    $$('#fType button').forEach(b => b.onclick = () => { f.type = b.dataset.v; refresh(true); });
+    $$('#fLen button').forEach(b => b.onclick = () => { f.len = b.dataset.v; renderFilters(); });
+    $$('#fGrades button').forEach(b => b.onclick = () => {
+      const g = +b.dataset.g;
+      f.grades = f.grades.includes(g) ? f.grades.filter(x => x !== g) : [...f.grades, g];
+      refresh(true);
+    });
+  }
+
+  /* --- clip list --- */
+  function buildQueue() {
+    queue = timed.filter(e =>
+      (f.player === 'all' || e.playerId === f.player) &&
+      (f.type === 'all' || e.type === f.type) &&
+      f.grades.includes(e.grade) &&
+      (f.set === 'all' || String(e.set) === String(f.set))
+    ).sort((a, b) => a.t - b.t);
+  }
+  function renderList() {
+    $('#ccount').textContent = queue.length;
+    const missing = m.events.length - timed.length;
+    $('#clist').innerHTML = (queue.length ? queue.map((e, i) => `
+      <button class="clip-row ${i === qi ? 'on' : ''}" data-i="${i}">
+        <span class="ctime">S${e.set} · ${fmtTime(e.t)}</span>
+        <span>${esc(playerName(pl(e.playerId)))} <span class="muted small">${TYPE_LABEL[e.type]}</span></span>
+        <span class="gchip g${e.grade}">${esc(evLabel(e))}</span>
+      </button>`).join('') : `<p class="muted small">${timed.length ? 'No clips match these filters.' : 'Nothing to play yet.'}</p>`)
+      + (missing ? `<p class="small muted">${missing} tag${missing === 1 ? ' has' : 's have'} no video time, so ${missing === 1 ? "it isn't" : "they aren't"} in the list.</p>` : '');
+    $$('#clist .clip-row').forEach(b => b.onclick = () => playClip(+b.dataset.i));
+  }
+  function markRow() { $$('#clist .clip-row').forEach(b => b.classList.toggle('on', +b.dataset.i === qi)); }
+  function refresh(filtersToo) {
+    auto = false; qi = -1;
+    if (video) video.pause();
+    buildQueue();
+    if (filtersToo) renderFilters();
+    renderList(); renderNow();
+  }
+
+  cleanup = () => { if (video) video.pause(); };
+  renderVideo(); buildQueue(); renderFilters(); renderList(); renderNow();
+}
+
+/* ============================================================
+   SHAREABLE REPORT IMAGE (drawn on a canvas, no libraries)
+   ============================================================ */
+const PLAYER_REPORT_HEAD = ['Player', 'Rec', 'Pass avg', 'Perfect', 'Serves', 'Srv avg', 'Aces', 'Errors'];
+const MATCH_REPORT_HEAD = ['Match', 'Rec', 'Pass avg', 'Perfect', 'Serves', 'Srv avg', 'Aces', 'Errors'];
+function statCells(r, s, bold) {
+  const ra = avg(r.sum, r.n), sa = avg(s.sum, s.n);
+  return [r.n, { t: f2(ra), q: qName(recQuality(ra)), b: bold }, pct(r.c[3], r.n), s.n, { t: f2(sa), q: qName(srvQuality(sa)), b: bold }, s.c[3], s.c[0]];
+}
+function playerReportRows(events, players) {
+  const S = computeStats(events), pl = id => players.find(p => p.id === id);
+  const ids = Object.keys(S.byPlayer).sort((a, b) => (+pl(a)?.number || 999) - (+pl(b)?.number || 999));
+  return [
+    ...ids.map(id => [playerName(pl(id)), ...statCells(S.byPlayer[id].receive, S.byPlayer[id].serve)]),
+    [{ t: 'Team', b: true }, ...statCells(S.total.receive, S.total.serve, true)],
+  ];
+}
+function matchReportRow(m, events) {
+  const S = computeStats(events);
+  return [`vs ${m.opponent || 'Opponent'} · ${fmtDate(m.date)}`, ...statCells(S.total.receive, S.total.serve)];
+}
+
+// Read the app's LIGHT colours (reports are always light so they print and share cleanly).
+function lightColours(names) {
+  const root = document.documentElement, prev = root.dataset.theme;
+  root.dataset.theme = 'light';
+  const cs = getComputedStyle(root), out = {};
+  names.forEach(n => { out[n] = cs.getPropertyValue('--' + n).trim(); });
+  if (prev) root.dataset.theme = prev; else delete root.dataset.theme;
+  return out;
+}
+
+// spec: { title, subtitle, tiles:[{k,v,s,q}], targets?:evalTargets(), notes?:[{label,text,q,detail}], tables:[{title, head, rows}] }
+function drawReport(spec) {
+  const C = lightColours(['bg', 'card', 'text', 'muted', 'line', 'blue', 'good', 'ok', 'bad']);
+  const FONT = '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, Roboto, sans-serif';
+  const font = (w, s) => `${w} ${s}px ${FONT}`;
+  const W = 1080, P = 56, IW = W - 2 * P, GAP = 20, TILE_H = 168, ROW = 54, SEC = 60, AFTER = 36;
+  const targets = (spec.targets || []), notes = spec.notes || [];
+
+  // work out the height first
+  let H = P + 130 + Math.ceil(spec.tiles.length / 3) * (TILE_H + GAP) + 10;
+  if (notes.length) H += SEC + notes.length * 64 + 20 + AFTER;
+  if (targets.length) H += SEC + targets.length * 58 + 20 + AFTER;
+  spec.tables.forEach(tb => { H += SEC + ROW + tb.rows.length * ROW + 16 + AFTER; });
+  H += 40 + P;
+
+  const cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  const x = cv.getContext('2d');
+  const rr = (X, Y, w, h, r) => { x.beginPath(); x.moveTo(X + r, Y); x.arcTo(X + w, Y, X + w, Y + h, r); x.arcTo(X + w, Y + h, X, Y + h, r); x.arcTo(X, Y + h, X, Y, r); x.arcTo(X, Y, X + w, Y, r); x.closePath(); };
+  const card = (X, Y, w, h) => { x.fillStyle = C.card; rr(X, Y, w, h, 24); x.fill(); };
+  const fit = (s, maxW, f) => { s = String(s); x.font = f; if (x.measureText(s).width <= maxW) return s; while (s.length > 1 && x.measureText(s + '…').width > maxW) s = s.slice(0, -1); return s + '…'; };
+  const text = (s, X, Y, f, col, align = 'left', maxW) => { x.font = f; x.fillStyle = col; x.textAlign = align; x.fillText(maxW ? fit(s, maxW, f) : String(s), X, Y); };
+  const qc = q => q === 'good' ? C.good : q === 'ok' ? C.ok : q === 'bad' ? C.bad : C.text;
+  const heading = (s, y) => text(s.toUpperCase(), P + 8, y + 40, font(500, 22), C.muted);
+
+  x.fillStyle = C.bg; x.fillRect(0, 0, W, H);
+  let y = P;
+  text('VOLLEYSTATS', W - P, y + 22, font(600, 20), C.muted, 'right');
+  text(spec.title, P, y + 52, font(700, 52), C.text, 'left', IW - 170);
+  text(spec.subtitle, P, y + 98, font(400, 28), C.muted, 'left', IW);
+  y += 130;
+
+  // summary tiles, 3 per row
+  const TW = (IW - 2 * GAP) / 3;
+  spec.tiles.forEach((tl, i) => {
+    const cx = P + (i % 3) * (TW + GAP), cy = y + Math.floor(i / 3) * (TILE_H + GAP);
+    card(cx, cy, TW, TILE_H);
+    text(tl.k, cx + 24, cy + 44, font(500, 24), C.muted, 'left', TW - 48);
+    text(tl.v, cx + 24, cy + 110, font(700, 56), qc(tl.q));
+    text(tl.s, cx + 24, cy + 146, font(400, 22), C.muted, 'left', TW - 48);
+  });
+  y += Math.ceil(spec.tiles.length / 3) * (TILE_H + GAP) + 10;
+
+  if (notes.length) {
+    heading('Trend', y); y += SEC;
+    card(P, y, IW, notes.length * 64 + 20);
+    notes.forEach((n, i) => {
+      const ry = y + 10 + i * 64;
+      if (i) { x.fillStyle = C.line; x.fillRect(P + 24, ry, IW - 48, 1); }
+      text(n.label, P + 24, ry + 42, font(600, 28), C.text);
+      text(n.text, P + 220, ry + 42, font(700, 28), qc(n.q));
+      text(n.detail, W - P - 24, ry + 42, font(400, 24), C.muted, 'right');
+    });
+    y += notes.length * 64 + 20 + AFTER;
+  }
+
+  if (targets.length) {
+    const { met, total } = targetsSummary(targets);
+    heading(`Targets · ${met} of ${total} met`, y); y += SEC;
+    card(P, y, IW, targets.length * 58 + 20);
+    targets.forEach((r, i) => {
+      const ry = y + 10 + i * 58;
+      if (i) { x.fillStyle = C.line; x.fillRect(P + 24, ry, IW - 48, 1); }
+      text(r.d.label, P + 24, ry + 40, font(500, 28), C.text);
+      text(`goal ${r.d.dir === 'min' ? '≥' : '≤'} ${fmtTarget(r.d, r.goal)}`, P + IW * 0.52, ry + 40, font(400, 24), C.muted, 'right');
+      text(fmtTarget(r.d, r.v), P + IW * 0.76, ry + 40, font(700, 28), C.text, 'right');
+      text(r.ok == null ? '–' : r.ok ? '✓' : '✗', W - P - 40, ry + 40, font(700, 32), r.ok == null ? C.muted : r.ok ? C.good : C.bad, 'center');
+    });
+    y += targets.length * 58 + 20 + AFTER;
+  }
+
+  spec.tables.forEach(tb => {
+    heading(tb.title, y); y += SEC;
+    const h = ROW + tb.rows.length * ROW + 16;
+    card(P, y, IW, h);
+    const n = tb.head.length, firstW = IW * 0.27, colW = (IW - 48 - firstW) / (n - 1);
+    const colX = i => i === 0 ? P + 24 : P + 24 + firstW + colW * i;   // right edge for number columns
+    tb.head.forEach((hd, i) => text(hd.toUpperCase(), colX(i), y + 38, font(500, 18), C.muted, i ? 'right' : 'left'));
+    tb.rows.forEach((row, r) => {
+      const ry = y + ROW + r * ROW;
+      x.fillStyle = C.line; x.fillRect(P + 24, ry, IW - 48, 1);
+      row.forEach((cell, i) => {
+        const c = cell && typeof cell === 'object' ? cell : { t: cell };
+        const f = font(c.b ? 700 : i === 0 ? 500 : 400, 25);
+        text(c.t ?? '', colX(i), ry + 36, f, qc(c.q), i ? 'right' : 'left', i ? undefined : firstW - 12);
+      });
+    });
+    y += h + AFTER;
+  });
+
+  text(`Made with VolleyStats · ${fmtDate(today())}`, P, H - P, font(400, 22), C.muted);
+  return cv.toDataURL('image/png');
+}
+
+// Preview sheet with a Share button (sharing must start from a tap on iPhone).
+function showReport(name, dataUrl) {
+  $$('.sheet').forEach(s => s.remove());
+  const el = document.createElement('div');
+  el.className = 'sheet';
+  el.innerHTML = `<div class="sheet-card" role="dialog" aria-label="Report preview">
+      <div class="row spread"><h3 style="margin:0">Report</h3><button class="btn sm" data-close>Close</button></div>
+      <img src="${dataUrl}" alt="Report preview">
+      <button class="btn primary block" data-share>Share image</button>
+      <p class="small muted" style="margin:0;text-align:center">Send it to players, parents or your team chat.</p>
+    </div>`;
+  document.body.appendChild(el);
+  el.onclick = e => { if (e.target === el || e.target.closest('[data-close]')) el.remove(); };
+  $('[data-share]', el).onclick = () => saveFile(name.replace(/[^\w\- ]+/g, '').trim() + '.png', null, 'image/png', dataUrl.split(',')[1]);
 }
 
 /* ---------- CSV / files ---------- */
@@ -738,16 +1236,24 @@ function exportCSV(name, events, players) {
   saveFile(name.replace(/[^\w\- ]+/g, '').trim() + '.csv', csv, 'text/csv');
 }
 
-async function saveFile(filename, text, mime) {
+// Share or download a file. Pass `text` for text files, or `base64` (and text = null) for images.
+async function saveFile(filename, text, mime, base64) {
   const cap = window.Capacitor;
   if (cap && cap.isNativePlatform && cap.isNativePlatform() && cap.Plugins.Filesystem && cap.Plugins.Share) {
     try {
-      const r = await cap.Plugins.Filesystem.writeFile({ path: filename, data: text, directory: 'CACHE', encoding: 'utf8' });
+      const r = await cap.Plugins.Filesystem.writeFile(base64
+        ? { path: filename, data: base64, directory: 'CACHE' }
+        : { path: filename, data: text, directory: 'CACHE', encoding: 'utf8' });
       await cap.Plugins.Share.share({ title: filename, files: [r.uri] });
       return;
     } catch (e) { if (!/cancel/i.test(String(e && e.message))) toast('Could not share file'); return; }
   }
-  const blob = new Blob([text], { type: mime });
+  let blob;
+  if (base64) {
+    const bin = atob(base64), bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    blob = new Blob([bytes], { type: mime });
+  } else blob = new Blob([text], { type: mime });
   try {
     const file = new File([blob], filename, { type: mime });
     if (navigator.canShare && navigator.canShare({ files: [file] }) && /Android|iPhone|iPad/i.test(navigator.userAgent)) {
@@ -814,9 +1320,12 @@ function viewSettings() {
         <li>Every serve receive or serve: tap the player, then the grade.</li>
         <li>Switch the <b>Set</b> number at the start of each set.</li>
         <li>Open <b>Stats</b> for the match, or <b>Season</b> for all matches.</li>
+        <li>Tap <b>Clips</b> to replay tagged moments back to back, for example all of one player's 0 passes.</li>
+        <li>Tap a player's name to see their profile and trend. Set <b>Team targets</b> on the team page.</li>
+        <li>Tap <b>Share report</b> to send a one-page summary picture.</li>
       </ol>
       Laptop shortcuts: Space play/pause, &larr; / &rarr; skip 3 seconds.
-      <p>VolleyStats v1.0</p>
+      <p>VolleyStats v1.1</p>
     </div>`;
   $$('[data-palette-opt]').forEach(b => b.onclick = () => {
     applyPalette(b.dataset.paletteOpt);

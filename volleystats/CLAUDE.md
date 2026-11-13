@@ -6,10 +6,10 @@ The owner is a beginner: explain changes in plain language, keep steps simple.
 
 ## Layout
 - `www/`: the whole app. Plain HTML/CSS/JS, no build step, no framework.
-  - `app.js`: hash router (`#/matches`, `#/teams`, `#/team/:id`, `#/new-match`, `#/match/:id/tag|stats|edit`, `#/season`, `#/settings`), views, stats maths, CSV export.
+  - `app.js`: hash router (`#/matches`, `#/teams`, `#/team/:id`, `#/new-match`, `#/match/:id/tag|stats|edit`, `#/match/:id/clips[/:playerId]`, `#/player/:id`, `#/season`, `#/settings`), views, stats maths, CSV export, team targets, shareable report image (canvas).
   - `styles.css`: colour tokens on `:root`, dark mode via `prefers-color-scheme`.
-  - Data lives in `localStorage` key `volleystats.v1`: `{ teams:[{id,name,players:[{id,number,name,pos}]}], matches:[{id,teamId,opponent,date,competition,squad:{playerId:pos},events:[{id,playerId,pos,type:'receive'|'serve',grade:0-3,set,t,ts}]}] }`.
-    Keep old saved data working when changing this shape.
+  - Data lives in `localStorage` key `volleystats.v1`: `{ teams:[{id,name,players:[{id,number,name,pos}],targets?:{passAvg,perfectPct,acedPct,serveAvg,acePct,serveErrPct}}], matches:[{id,teamId,opponent,date,competition,squad:{playerId:pos},events:[{id,playerId,pos,type:'receive'|'serve',grade:0-3,set,t,ts}]}] }`.
+    Keep old saved data working when changing this shape. Videos are never stored: the coach re-picks the file (object URL in `videoUrls`), events keep the time `t`.
 - `dev/phone-preview.html`: iPhone frame used with VS Code **Live Preview** (`Ctrl+Shift+P` → Live Preview: Start Server).
 - `android/`: Capacitor Android project. After changing `www/`, `npx cap sync android`. GitHub Actions builds the APK.
 
