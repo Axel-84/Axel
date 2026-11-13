@@ -24,7 +24,7 @@
 /* ---------- Navy & Sand: light (default) ---------- */
 :root, :root[data-palette="navy"] {
   --blue: #2f4466;          /* matte navy: main accent, buttons, links, selected */
-  --green: #587350;         /* sage (grade 3) */
+  --green: #4b6444;         /* sage (grade 3) */
   --teal: #4a6f80;          /* dusty steel (grade 2) */
   --orange: #a5622f;        /* ochre clay (grade 1) */
   --red: #a3473a;           /* brick red (grade 0, delete) */
@@ -74,7 +74,7 @@
 @media (prefers-color-scheme: dark) {
   /* Navy & Sand: dark */
   :root:not([data-theme="light"]) {
-    --blue: #9db0cf; --green: #587350; --teal: #4a6f80; --orange: #a5622f; --red: #b85a46; --yellow: #c4a560; --gray: #8a8e98;
+    --blue: #9db0cf; --green: #4b6444; --teal: #4a6f80; --orange: #a5622f; --red: #b85a46; --yellow: #c4a560; --gray: #8a8e98;
     --bg: #121722; --card: #1b2230; --fill: rgba(200,190,170,.08);
     --text: #ede4d3; --muted: rgba(237,228,211,.56); --line: rgba(237,228,211,.10);
     --bar: rgba(18,23,34,.82); --tint-soft: rgba(157,176,207,.15); --danger-soft: rgba(205,120,100,.15); --seg-on: #333c4d; --card-edge: rgba(220,230,255,.05);
@@ -92,7 +92,7 @@
 }
 /* Navy & Sand: dark (forced) */
 :root[data-theme="dark"] {
-  --blue: #9db0cf; --green: #587350; --teal: #4a6f80; --orange: #a5622f; --red: #b85a46; --yellow: #c4a560; --gray: #8a8e98;
+  --blue: #9db0cf; --green: #4b6444; --teal: #4a6f80; --orange: #a5622f; --red: #b85a46; --yellow: #c4a560; --gray: #8a8e98;
   --bg: #121722; --card: #1b2230; --fill: rgba(200,190,170,.08);
   --text: #ede4d3; --muted: rgba(237,228,211,.56); --line: rgba(237,228,211,.10);
   --bar: rgba(18,23,34,.82); --tint-soft: rgba(157,176,207,.15); --danger-soft: rgba(205,120,100,.15); --seg-on: #333c4d; --card-edge: rgba(220,230,255,.05);
