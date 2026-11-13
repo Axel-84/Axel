@@ -55,7 +55,8 @@ export default function App() {
         bounces={false}
         overScrollMode="never"
         setSupportMultipleWindows={false}
-        textInteractionEnabled={false}
+        // Don't set textInteractionEnabled={false}: on iPhone it also blocks typing in text boxes.
+        // The "no text highlighting on long-press" feel is done in www/styles.css instead.
         domStorageEnabled
         javaScriptEnabled
       />

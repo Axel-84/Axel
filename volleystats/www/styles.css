@@ -111,6 +111,10 @@
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; }
+/* Feel like a native app: no text highlighting or copy pop-up when you long-press buttons and labels... */
+body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+/* ...but text boxes must stay selectable, or iPhone won't let you type in them. */
+input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
 body {
   font-family: var(--font); font-size: 17px; letter-spacing: -.41px; line-height: 1.29;
   background: var(--bg); color: var(--text);
