@@ -1238,6 +1238,11 @@ function exportCSV(name, events, players) {
 
 // Share or download a file. Pass `text` for text files, or `base64` (and text = null) for images.
 async function saveFile(filename, text, mime, base64) {
+  // Running inside the Expo app (mobile/): hand the file to the iPhone share sheet
+  if (window.ReactNativeWebView) {
+    window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'saveFile', filename, text, mime, base64 }));
+    return;
+  }
   const cap = window.Capacitor;
   if (cap && cap.isNativePlatform && cap.isNativePlatform() && cap.Plugins.Filesystem && cap.Plugins.Share) {
     try {
@@ -1386,6 +1391,6 @@ function addDemo() {
 
 /* ---------- boot ---------- */
 route();
-if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost') && !(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())) {
+if ('serviceWorker' in navigator && !window.ReactNativeWebView && (location.protocol === 'https:' || location.hostname === 'localhost') && !(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
