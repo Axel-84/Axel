@@ -233,8 +233,32 @@ function posOptions(sel) {
 function viewTeam(id) {
   const t = team(id); if (!t) { location.hash = '#/teams'; return; }
   setChrome({ title: t.name, back: '#/teams', tab: 'teams' });
+
+  // Copy everything typed on screen into the saved team. Called while typing,
+  // on the Save button, and when leaving the screen, so nothing typed is lost.
+  const flush = () => {
+    const nm = $('#tname'); if (!nm) return false;
+    if (nm.value.trim()) t.name = nm.value.trim();
+    $$('.prow[data-id]').forEach(row => {
+      const p = t.players.find(x => x.id === row.dataset.id); if (!p) return;
+      $$('[data-f]', row).forEach(inp => { p[inp.dataset.f] = inp.value.trim(); });
+    });
+    // A player typed in the "add" row but not added yet still counts
+    const f = $('#addP');
+    let added = false;
+    if (f && f.elements.name.value.trim()) {
+      t.players.push({ id: uid(), number: f.elements.number.value.trim(), name: f.elements.name.value.trim(), pos: f.elements.pos.value });
+      f.elements.name.value = ''; f.elements.number.value = '';
+      added = true;
+    }
+    save();
+    return added;
+  };
+
   const render = () => {
-    const players = [...t.players].sort((a, b) => (+a.number || 999) - (+b.number || 999));
+    // Players stay in the order they were added, so rows never jump around while you edit
+    const players = t.players;
+    const byNumber = [...t.players].sort((a, b) => (+a.number || 999) - (+b.number || 999));
     app.innerHTML = `
       <div class="card">
         <label class="field"><span>Team name</span><input id="tname" value="${esc(t.name)}" maxlength="60"></label>
@@ -244,22 +268,23 @@ function viewTeam(id) {
         <div class="prow small muted"><span>No.</span><span>Name</span><span>Position</span><span></span></div>
         ${players.map(p => `
           <div class="prow" data-id="${p.id}">
-            <input data-f="number" inputmode="numeric" value="${esc(p.number)}" maxlength="3">
-            <input data-f="name" value="${esc(p.name)}" maxlength="40">
-            <select data-f="pos">${posOptions(p.pos)}</select>
+            <input data-f="number" inputmode="numeric" value="${esc(p.number)}" maxlength="3" aria-label="Number">
+            <input data-f="name" value="${esc(p.name)}" maxlength="40" aria-label="Name">
+            <select data-f="pos" aria-label="Position">${posOptions(p.pos)}</select>
             <button class="xbtn" data-del title="Remove player">&times;</button>
           </div>`).join('') || '<p class="muted small">No players yet.</p>'}
         <form id="addP" class="prow" style="margin-top:8px">
           <input name="number" inputmode="numeric" placeholder="No." maxlength="3">
-          <input name="name" placeholder="Player name" required maxlength="40">
+          <input name="name" placeholder="Player name" required maxlength="40" enterkeyhint="done">
           <select name="pos">${posOptions('OH')}</select>
           <button class="btn primary sm" title="Add player">+</button>
         </form>
       </div>
+      <button class="btn primary block" id="saveTeam">Save</button>
       <details class="card small"><summary><b>Position codes</b></summary>
         <p>${POSITIONS.map(p => `<b>${p.code}</b> ${p.name}`).join(' · ')}</p></details>
-      ${players.length ? `<h2>Player stats</h2>
-      <div class="card">${players.map(p => `
+      ${byNumber.length ? `<h2>Player stats</h2>
+      <div class="card">${byNumber.map(p => `
         <a class="list-item link-row" href="#/player/${p.id}">
           <span class="grow">${esc(playerName(p))} <span class="pill">${esc(p.pos)}</span></span><span class="chev">&#8250;</span>
         </a>`).join('')}</div>` : ''}
@@ -273,28 +298,39 @@ function viewTeam(id) {
       </div>
       <button class="btn danger" id="delTeam">Delete team</button>`;
 
-    $('#tname').onchange = e => { t.name = e.target.value.trim() || t.name; save(); setChrome({ title: t.name, back: '#/teams', tab: 'teams' }); };
+    // Save every letter as it's typed (iPhone doesn't always report the last change when you leave)
+    $('#tname').oninput = () => { const v = $('#tname').value.trim(); if (v) { t.name = v; save(); } };
+    $('#tname').onchange = () => setChrome({ title: t.name, back: '#/teams', tab: 'teams' });
     $$('.prow[data-id]').forEach(row => {
       const p = t.players.find(x => x.id === row.dataset.id);
-      $$('[data-f]', row).forEach(inp => inp.onchange = () => { p[inp.dataset.f] = inp.value.trim(); save(); });
+      $$('[data-f]', row).forEach(inp => { inp.oninput = inp.onchange = () => { p[inp.dataset.f] = inp.value.trim(); save(); }; });
       $('[data-del]', row).onclick = () => {
         if (!confirmDo(`Remove ${playerName(p)}? Their tagged stats stay in old matches.`)) return;
+        flush();
         t.players = t.players.filter(x => x !== p); save(); render();
       };
     });
-    $$('[data-target]').forEach(inp => inp.onchange = () => {
+    const saveTarget = (inp, quiet) => {
       const v = parseFloat(inp.value.replace(',', '.'));
       t.targets ??= {};
       if (isNaN(v)) { delete t.targets[inp.dataset.target]; inp.value = ''; }
       else { t.targets[inp.dataset.target] = v; inp.value = v; }
-      save(); toast(isNaN(v) ? 'Target removed' : 'Target saved');
-    });
+      save(); if (!quiet) toast(isNaN(v) ? 'Target removed' : 'Target saved');
+    };
+    $$('[data-target]').forEach(inp => { inp.onchange = () => saveTarget(inp); });
     $('#addP').onsubmit = e => {
       e.preventDefault();
-      const f = e.target;
-      t.players.push({ id: uid(), number: f.number.value.trim(), name: f.name.value.trim(), pos: f.pos.value });
-      save(); render();
+      if (!flush()) return;
+      render();
       $('#addP [name=number]').focus();
+    };
+    $('#saveTeam').onclick = () => {
+      $$('[data-target]').forEach(inp => saveTarget(inp, true));
+      const added = flush();
+      document.activeElement?.blur();
+      render();
+      setChrome({ title: t.name, back: '#/teams', tab: 'teams' });
+      toast(added ? 'Saved (new player added)' : 'Saved');
     };
     $('#delTeam').onclick = () => {
       const n = db.matches.filter(m => m.teamId === t.id).length;
@@ -305,6 +341,17 @@ function viewTeam(id) {
     };
   };
   render();
+
+  // Leaving the screen (Back, tab bar) or closing the app: keep what was typed
+  const onHide = () => { if (document.visibilityState === 'hidden') flush(); };
+  const onPageHide = () => flush();
+  document.addEventListener('visibilitychange', onHide);
+  window.addEventListener('pagehide', onPageHide);
+  cleanup = () => {
+    if (db.teams.includes(t)) flush();
+    document.removeEventListener('visibilitychange', onHide);
+    window.removeEventListener('pagehide', onPageHide);
+  };
 }
 
 /* ============================================================

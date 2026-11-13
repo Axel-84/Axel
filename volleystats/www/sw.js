@@ -1,5 +1,5 @@
 // Offline support: keep the app working with no signal in a sports hall.
-const CACHE = 'volleystats-v11';
+const CACHE = 'volleystats-v13';
 const ASSETS = ['./', 'index.html', 'styles.css', 'app.js', 'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png'];
 
 self.addEventListener('install', e => {
