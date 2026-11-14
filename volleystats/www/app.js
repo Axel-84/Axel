@@ -108,7 +108,11 @@ function setChrome({ title, back, tab, tabs = true, right = '', large = false })
   b.style.visibility = back ? 'visible' : 'hidden';
   b.onclick = () => {
     // '@back:#/fallback' = go back to wherever the user came from (screens reachable from several places)
-    if (String(back).startsWith('@back:')) { if (navCount > 1) history.back(); else location.hash = back.slice(6); }
+    // The app keeps its own list of visited screens: the browser's history doesn't work inside Expo Go.
+    if (String(back).startsWith('@back:')) {
+      if (navStack.length > 1) { navStack.pop(); location.hash = navStack[navStack.length - 1]; }
+      else location.hash = back.slice(6);
+    }
     else location.hash = back;
   };
   $('#topRight').innerHTML = right;
@@ -138,11 +142,13 @@ function updateTabbar(tab) {
   if (!nav.classList.contains('ready')) requestAnimationFrame(() => requestAnimationFrame(() => nav.classList.add('ready')));
 }
 
-let navCount = 0;
+let navStack = [];   // screens visited, newest last (used by the "‹ Back" button)
 function route() {
   if (cleanup) { cleanup(); cleanup = null; }
   $$('.sheet').forEach(s => s.remove());
-  navCount++;
+  const here = location.hash || '#/matches';
+  if (navStack[navStack.length - 1] !== here) navStack.push(here);
+  if (navStack.length > 50) navStack = navStack.slice(-50);
   const parts = (location.hash.replace(/^#\/?/, '') || 'matches').split('/');
   const [p0, p1, p2, p3] = parts;
   window.scrollTo(0, 0);
@@ -412,7 +418,7 @@ function viewNewMatch(teamId) {
 function viewEditMatch(id) {
   const m = match(id); if (!m) { location.hash = '#/matches'; return; }
   const t = team(m.teamId);
-  setChrome({ title: 'Edit match', back: '#/match/' + id + '/tag', tab: 'matches', tabs: false });
+  setChrome({ title: 'Edit match', back: '@back:#/match/' + id + '/tag', tab: 'matches', tabs: false });
   app.innerHTML = `
     <form id="mf" class="stack">
       <div class="card stack">
@@ -743,7 +749,7 @@ let matchStatsSet = null;
 function viewMatchStats(id) {
   const m = match(id); if (!m) { location.hash = '#/matches'; return; }
   const t = team(m.teamId) || { name: 'Team', players: [] };
-  setChrome({ title: `Stats vs ${m.opponent || 'Opponent'}`, back: '#/match/' + id + '/tag', tab: 'matches', tabs: false });
+  setChrome({ title: `Stats vs ${m.opponent || 'Opponent'}`, back: '@back:#/match/' + id + '/tag', tab: 'matches', tabs: false });
   const render = () => {
     const evs = matchStatsSet ? m.events.filter(e => e.set === matchStatsSet) : m.events;
     const sub = `${fmtDate(m.date)}${m.competition ? ' · ' + m.competition : ''}${matchStatsSet ? ' · Set ' + matchStatsSet : ''}`;
